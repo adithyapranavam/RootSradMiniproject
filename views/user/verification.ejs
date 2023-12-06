@@ -1,0 +1,114 @@
+
+<%- include('../layouts.ejs') %>
+
+
+<style>
+    /* --------OTP------------- */
+.CardOTP {
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 14px;
+  margin-top: 10%;
+}
+
+.imgOTP {
+  width: 70px;
+}
+
+.CardOTP span {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--primaryText);
+}
+
+.code {
+  border-radius: 12px;
+  border: 2px solid #8e8585;
+  font-size: 20px;
+  width: 50px;
+  height: 50px;
+  margin: 10px;
+  text-align: center;
+  font-weight: 300;
+}
+.code::-webkit-outer-spin-button,
+.code::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+.CardOTP button {
+  background-color: var(--primaryBg);
+  width: 50%;
+  border-radius: 35px;
+}
+.OTPtext {
+  color: var(--primaryText);
+}
+</style>
+
+<div class="container d-flex justify-content-center align-items-center">
+    <div class="container col-lg-4 d-flex flex-column justify-content-center align-items-center rounded-5 p-5 bg-white CardOTP">
+        <div class="d-flex align-items-center justify-content-center">
+            <img src="/assets/nav/tck.png" alt="" class="img-fluid imgOTP">
+        </div>
+        <span>Enter OTP Code</span>
+        <span class="text-danger fw-bold">
+            <%=locals.fal? fal:" " %></span>
+        <% if (locals.signinPage==1) { %>
+        <form action="/signIn" method="post" class="d-flex flex-column align-items-center">
+            <div class="row pt-3">
+                <input class="code" type="text" placeholder="0" min="0" max="9" name="num_1" required maxlength="1">
+                <input class="code" type="text" placeholder="0" min="0" max="9" name="num_2" required maxlength="1">
+                <input class="code" type="text" placeholder="0" min="0" max="9" name="num_3" required maxlength="1">
+                <input class="code" type="text" placeholder="0" min="0" max="9" name="num_4" required maxlength="1">
+            </div>
+            <button class="btn mt-2 text-white bg-info" type="submit">validate</button>
+        </form>
+        <%}else if (locals.signinPage==2) { %>
+            <form action="/resetPassword" method="post" class="d-flex flex-column align-items-center">
+                <div class="row pt-3">
+                    <input class="code" type="text" placeholder="0" min="0" max="9" name="num_1" required maxlength="1">
+                    <input class="code" type="text" placeholder="0" min="0" max="9" name="num_2" required maxlength="1">
+                    <input class="code" type="text" placeholder="0" min="0" max="9" name="num_3" required maxlength="1">
+                    <input class="code" type="text" placeholder="0" min="0" max="9" name="num_4" required maxlength="1">
+                </div>
+                <button class="btn mt-2 text-white bg-info" type="submit">validate</button>
+            </form>
+        <%}else{ %>
+            <form action="/validation" method="post" class="d-flex flex-column align-items-center">
+                <div class="row pt-3">
+                    <input class="code" type="text" placeholder="0" min="0" max="9" name="num_1" required maxlength="1">
+                    <input class="code" type="text" placeholder="0" min="0" max="9" name="num_2" required maxlength="1">
+                    <input class="code" type="text" placeholder="0" min="0" max="9" name="num_3" required maxlength="1">
+                    <input class="code" type="text" placeholder="0" min="0" max="9" name="num_4" required maxlength="1">
+                </div>
+                <button class="btn mt-2 text-white bg-info" type="submit">validate</button>
+            </form>
+        <% } %>
+        <span class="mt-2 fs-5" id="time"></span>
+        <div id="timer" class="OTPtext mt-2" style="display:none">Don’t get the code?<a class="text-danger text-decoration-none" href="/login">Resent</a></div>
+    </div>
+</div>
+</div>
+<script>
+const inputs = document.querySelectorAll('.code');
+for (let i = 0; i < inputs.length; i++) {
+    inputs[i].addEventListener('input', function() {
+        if (this.value.length === this.maxLength) {
+            inputs[i + 1].focus();
+        }
+    });
+}
+
+let timeLeft = 59;
+const Counter = document.getElementById('time');
+const timerId = setInterval(countdown, 1000);
+
+function countdown() {
+    const text = document.getElementById("timer");
+    if (timeLeft == -1) {
+        text.style.display = "inline-block";
+    } else {
+        Counter.innerHTML = '00 :' + " " + timeLeft;
+        timeLeft--;
+    }
+}
+</script>

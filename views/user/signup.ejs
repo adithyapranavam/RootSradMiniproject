@@ -1,0 +1,31 @@
+<%- include('../layouts.ejs')%>
+
+  <section class="vh-100">
+    <div class="container py-5">
+      <div class="row d-flex justify-content-center align-items-center">
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="card shadow">
+            <div class="card-body p-4 text-center">
+              <h3 class="mb-4">Sign Up</h3>
+              <form action="/signup"method="post"onsubmit="return allChecking()">
+                <div class="form-outline mb-2">
+                <input type="text" id="name" name="name"placeholder="Name" class="form-control" onchange="validateName()" required>
+                <div style="display: flex;flex:end ;"><span id="name-error"></span></div>
+                <input type="text" id="phone" name="phone"placeholder="Phone" class="form-control"  onchange="validateNumber()" required>
+                <div style="display: flex;flex:end ;"><span id="num-error"></span></div>
+                <input type="text" id="email" name ="email"placeholder="Email" class="form-control" onchange="validateEmail()" required>
+                <div style="display: flex;flex:end ;"><span id="email-error"></span></div>
+                <input type="password" id="password" name="password"placeholder="Password" class="form-control"onchange="validatePassword()" required>
+                <div style="display: flex;flex:end ;"><span id="pass-error"></span></div>
+                <input type="password" id="confpassword" name="confpassword"placeholder="Confirm Password" class="form-control"onchange="confirmPasswordChecking()" required>
+                <div style="display: flex;flex:end ;"><span id="Confpassword"></span></div>
+                </div>
+                <button class="btn btn-primary btn-block" type="submit"onclick="validateForm()">Create Account</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <script src="./js/validation.js"></script>

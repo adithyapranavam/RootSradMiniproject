@@ -1,0 +1,35 @@
+
+<%- include('../layouts.ejs')%>
+
+  <section class="vh-100">
+    <div class="container py-5">
+      <div class="row d-flex justify-content-center align-items-center">
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="card shadow">
+            <div class="card-body p-4 text-center">
+              <h3 class="mb-4">Sign In</h3>
+              <form action=""id="loginForm"method="post" onsubmit="return validateForm() " >
+                <div class="form-outline mb-2">
+                  <input type="text" id="email" name="email" placeholder="Email" class="form-control" onblur="emailValidate()" >
+                  <div style="display: flex;flex:end ;"><p id="emailerror" style="color:red; margin-left: 0px;"></p></div>
+                </div>
+                <div class="form-outline mb-2">                  
+                  <input type="password" id="password" name="password" placeholder="Password" class="form-control" onblur="passwordValidate()">
+                  <div style="display: flex;flex:end ;"><p id="passworderror" style="color: red; margin-left: 0px;"></p></div>
+                </div>
+                <div class="form-check d-flex justify-content-start mb-2">
+                  <a href="">Forgot Password?</a>
+                </div>
+                <button class="btn btn-primary btn-block" type="submit"onclick="emailValidate(),passwordValidate()">Login</button>
+                <p id="send-error"style="color:red"></p>
+                <p class="mt-2">New here? &nbsp;<a href="/signup">Create Account</a></p>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<script src="./js/validation.js"></script>
+<%- include('../partials/userfooter.ejs') %>

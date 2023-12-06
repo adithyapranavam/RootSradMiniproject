@@ -1,0 +1,38 @@
+.navbar {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    background-color: #f3f1f1;
+  }
+  @media (min-width: 1200px) {
+    .navbar {
+      height: 100px;
+    }
+  }
+  .search {
+    width: 243px;
+    height: 38px;
+    background: #ffffff;
+    border: none;
+    border-radius: 7px;
+  }
+  .search:focus {
+    outline: none;
+  }
+  .iconP {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(206, 206, 206);
+    border-radius: 50%;
+    height: 35px;
+    width: 35px;
+  }
+  .Nav_icon i {
+    cursor: pointer;
+  }
+  
+  .Nav_icon button {
+    border-radius: 50%;
+  }
+  
