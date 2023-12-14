@@ -34,6 +34,7 @@ function passwordValidate()
     }
    
 }
+
 function validateForm()
 {   
     var passwords = document.getElementById('password').value;

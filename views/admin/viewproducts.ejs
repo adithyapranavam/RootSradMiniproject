@@ -57,9 +57,9 @@
       </a>
      </li>
      <li class="nav-item">
-        <form class="search-bar">
-          <input type="text" class="form-control" placeholder="Enter keywords">
-           <a href="javascript:void();"><i class="icon-magnifier"></i></a>
+      <form class="search-bar" action="/admin/product-Search" method="post">
+        <input type="text" name="search" class="form-control" placeholder="Search Here.....">
+           <button type="submit"><i class="icon-magnifier"></i></button>
         </form>
       </li>
    </ul>
@@ -117,11 +117,11 @@
                             </td>
                             <td id="pro-body">
                                 <% if (element.availability === true) { %>
-                                    <form action="/admin/p_unlist/<%= element._id %>" method="POST">
+                                    <form action="/admin/productUnlist/<%= element._id %>" method="POST">
                                         <button class="btn btn-danger btn-sm" type="button" onclick="list(this.form)">Unlist</button>
                                     </form>
                                 <% } else if (element.availability === false) { %>
-                                    <form action="/admin/p_list/<%= element._id %>" method="POST">
+                                    <form action="/admin/productList/<%= element._id %>" method="POST">
                                         <button class="btn btn-success btn-sm" type="button" onclick="unlist(this.form)">List</button>
                                     </form>
                                 <% } %>
@@ -157,11 +157,10 @@
 <script>
 
   function list(form) {
-    // swal("Hello world!");
     swal({
       title: "Are you sure?",
       text: "You want to list the product!",
-      // icon: "warning",
+  
       buttons: true,
       dangerMode: true,
     }).then((willDelete) => {

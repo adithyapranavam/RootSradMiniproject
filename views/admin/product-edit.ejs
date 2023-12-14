@@ -75,7 +75,7 @@
  </header>
 <!--End topbar header-->
 <div class="content-wrapper">
-    <div class="container-fluid">
+    <div class=" container-fluid d-flex justify-content-center align-items-center">
         <div class="col-lg-6">
             <form action="/admin/product-edit" method="post" enctype="multipart/form-data" id="pro-edit" class="col-md-12">
                 <% if (locals.msg) { %>
@@ -143,9 +143,7 @@
                     <button type="button" class="btn btn-success" style="background :#0D9E00;font-size: 11px; width: 150px;" onclick="list(this.form)">Apply
                         Changes
                     </button>
-                    <button type="button" class="btn btn-success" style="background :#ff0a0a;font-size: 11px; width: 150px;" onclick="listDeleteConfirmation('<%= productData._id %>')">soft
-                        delete
-                    </button>
+                    
                 </div>
               
                </form>

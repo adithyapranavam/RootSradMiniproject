@@ -2,10 +2,11 @@ const user = require('../model/usermodel')
 const bcrypt = require('bcrypt');
 const fast2sms = require('fast-two-sms');  
 const OTP = require('../model/otpmodel');  
+const { isValidObjectId } = require('mongoose');
     
   
 const API = "LpKOkcUND4ClatShjgRIH2FVPG1wbn7sx9BfZeE03QrozXA6WdbwJ2VIs6laoPdzDC14KrOtWTuRA0vm"
-
+// const API = '5up7TU2xUT3b03fmU8g3RwLblLzzewFJCFLvXl9HUseNiiSp93nZ1MiE2aFM'
 
 // PASSWORD BCRYPT
 const SecurePassword = async(password)=>
@@ -24,13 +25,13 @@ const SecurePassword = async(password)=>
 const home = async(req,res)=>
 {
     try{
-        if(req.session.userData){
+        if(req.session.data){
+            const user = true
+            res.render('user/home',{user})
+        }else{
             const user = false
             res.render('user/home',{user})
         }
-        const user = true
-
-         res.render('user/home',{user})
 
     }
     catch(error)
@@ -55,6 +56,182 @@ const login = async(req,res)=>
     }
 }
   
+ const loginPost = async(req,res)=>
+ {
+     try{
+            const {email,password}=req.body;
+            if(!email||!password)
+            {
+                res.render("user/login",{message:"Require all the feilds"})
+            }
+            const isExistingUser =  await user.findOne({ email: email ,isAdmin:false });
+
+            console.log(isExistingUser)
+            
+            if(!isExistingUser)
+            {
+                return res.render("user/login",{message:"This user not found"})
+            }
+            if(isExistingUser.password === password)
+            {
+                const signinPage = 0;
+                req.session.data = isExistingUser.email
+                const number = isExistingUser.number;
+                let randome = Math.floor(Math.random() * 9000) + 1000;
+                fast2sms.sendMessage({
+                    authorization: API,
+                    message: `Your verification OTP is: ${randome}`,
+                    numbers: [number],
+                })
+                    .then(saveUser());
+                //save randome Number to database then render verify page
+                console.log("this is otp",randome);
+                function saveUser() {
+                    const newUser = new OTP({
+                        number: randome
+                    })
+                    newUser.save()
+                        .then(() => {
+                            res.render('user/verification', {  signinPage });
+                        })
+                        .catch((error) => {
+                            console.log("error generating numb", error);
+                        });
+                }
+            }
+        }
+        catch(err)
+        {
+            console.log("error in sign up",err);
+        }
+ }
+ const loginOtpValidation = async (req, res) => {
+    // let cartCount; 
+    try {
+        // console.log(cartCount);
+        const num1 = req.body.num_1;
+        const num2 = req.body.num_2;
+        const num3 = req.body.num_3;
+        const num4 = req.body.num_4;
+        const code = parseInt(num1 + num2 + num3 + num4);
+       
+        await OTP.find({ number: code })
+            .then((fount) => {
+                if (fount.length > 0) {
+                    const succ = "Successfully LoggedIn"
+                    res.redirect('/home')
+
+                    // IF FOUND, DELETE THE OTP CODE FROM DB
+
+                    OTP.findOneAndDelete({ number: code })
+                        .then(() => {
+                            console.log("successfully deleted")
+                        })
+                        .catch((err) => {
+                            console.log("error while deleting", err);
+                        });
+                } else {
+                    res.render('user/verification', { fal: "Please Check Your OTP" })
+                }
+            })
+            .catch((err) => {
+                console.log(err)
+                res.render('user/verification', { fal: "Please Check Your OTP" })
+            })
+    } catch (error) {
+        console.log(error)
+        res.status(500).send("LogIn Otp error")
+    }
+}
+const forGotPassword = async(req,res)=>
+{
+    try
+    {
+              res.render("user/forgotPassword")
+    }
+    catch(err)
+    {
+        console.log(err)
+    }
+}
+const numberValidation = async(req,res)=>
+{
+    try
+    {
+        const number = req.body.number;
+        req.session.userNumber = number;
+        const signinPage = 2;
+        const userExist = await user.findOne({number:number});
+        if(userExist)
+        {
+            const randome = Math.floor(Math.random() * 9000) + 1000;
+            fast2sms.sendMessage({
+                authorization: API,
+                message: `Your verification OTP is: ${randome}`,
+                numbers: [number],
+            })
+                .then(saveUser());
+            //save randome Number to database then render verify page
+            function saveUser() {
+                const newUser = new OTP({
+                    number: randome
+                })
+                newUser.save()
+                    .then(() => {
+                        res.render('user/verification', { signinPage });
+                    })
+                    .catch((error) => {
+                        console.log("error generating numb", error);
+                    });
+            }
+        } else {
+            const msg = "Please Enter The Currect Number";
+            res.render("user/forgotPassword", { msg })
+        }
+    }
+    
+    catch(err)
+    {
+        const msg = "Server Error Wait for the Admin Response";
+        console.log("error At the number validation inreset place" + err);
+        res.status(500).render("user/forgotPassword", {  msg })
+    }
+}
+// const newPassword = async (req, res) => {
+//     try {
+//         const psw = req.body.password;
+//         const userNumber = req.session.userNumber;
+//         // const newPassword = await pwdEncription(psw);
+//         await user.findOneAndUpdate({ number: userNumber }, {
+//             $set: {
+//                 password: newPassword
+//             }
+//         });
+//         req.session.userNumber = null;
+//         const succ = "Successfully Changed Your Password"
+//         res.redirect('/home')
+//     } 
+//     catch (error) 
+//     {
+//         console.log(error);
+//     }
+// }
+const signout = (req, res) => {
+    try {
+        req.session.destroy((err) => {
+            if (err) {
+                res.send('Error')
+            } else {
+                res.redirect('/')
+            }
+        })
+
+    } catch (error) {
+        console.log(err);
+        const message = error.message
+        res.status(500).render('404-error', {  error:500, message:'Internal Server Error' });
+    }
+} 
 
 
 //SIGN UP
@@ -99,7 +276,6 @@ const userRegister = async(req,res)=>
                     isAdmin:false
                 })
                 const signinPage = 1;
-                console.log(user);
                 let randome = Math.floor(Math.random() * 9000) + 1000;
                 fast2sms.sendMessage({
                     authorization: API,
@@ -178,22 +354,7 @@ const successTick = (req, res) => {
     res.render('user/successTick', { title: "Account", succ: "Success.....", user: req.session.user, cartCount })
 }
 
-const logout = (req,res)=>{
-    try {
-        req.session.destroy((err) => {
-            if (err) {
-                res.send('Error')
-            } else {
-                res.redirect('/login')
-            }
-        })
 
-    } catch (error) {
-        console.log(err);
-        const message = error.message
-        res.status(500).send('404-error', {  error:500, message:'Internal Server Error' });
-    }
-}
 
 
 
@@ -204,6 +365,11 @@ module.exports = {
     userRegister, 
     OTPValidationSignIn,
     successTick,
-    logout
+    loginPost,
+    loginOtpValidation,
+    signout,
+    forGotPassword,
+    numberValidation,
+    // newPassword
 }
 

@@ -52,6 +52,19 @@ const fs = require('fs')
        }
      }
 
+     const adminLogout = async(req,res)=>
+     {
+            try {
+                req.session.destroy()
+                console.log("admin logout successfully")
+                res.redirect("admin/adminLogin")
+                alert("Admin Logout Successfully")
+            } catch (err) {
+                console.log("Error in admin logout")
+            }
+        
+    }
+
      //Admin Dashboard
 
      const dashboard = async(req,res)=>
@@ -121,6 +134,20 @@ const userDetails = async(req,res)=>
         catch(err)
         {
             console.log(err)
+        }
+     }
+     const userSearch = async(req,res)=>
+     {
+        const search = req.body.search
+        const user = await userModel.find({name:{ $regex: '^' + search,$options: 'i'} })
+
+        if(user === '')
+        {
+            res.render('admin/userDetails',{user,nodata: 'Searching name is not available'})
+        }
+        else {
+         
+            res.render('admin/userDetails', { user })
         }
      }
 
@@ -366,7 +393,56 @@ const userDetails = async(req,res)=>
     }
         
 }
-    
+
+const productUnlist = async (req, res) => {
+    try {
+        const prod_Id = req.params.id
+        await productCollection.findByIdAndUpdate({ _id: prod_Id }, {
+            $set: {
+                availability: false
+            }
+        })
+        res.redirect('/admin/viewproducts')
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+const productList = async (req, res) => {
+    try {
+        const prod_Id = req.params.id
+        await productCollection.findByIdAndUpdate({ _id: prod_Id }, {
+            $set: {
+                availability: true
+            }
+        })
+        res.redirect('/admin/viewproducts')
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+const productSearch = async(req,res)=>
+{
+    try
+    {     
+        const search = req.body.search
+        const product = await productCollection.find({$and:[{name:{$regex:'^' + search,$options:'i'}}]})
+        let nodataMessage = '';
+        if(product.length === 0)
+        {
+            nodataMessage = 'No data available';
+            res.render('admin/viewproducts',{product,nodata:nodataMessage})
+        }
+        else{
+            res.render('admin/viewproducts',{product})
+        }
+    }
+    catch(err)
+    {
+         console.log(err.message);
+    }
+}
 
 module.exports = 
 {
@@ -387,5 +463,10 @@ module.exports =
     productAdding,
     productAddingPost,
     productEdit,
-    productEditPost
+    productEditPost,
+    productUnlist,
+    productList,
+    productSearch,
+    userSearch ,
+    adminLogout
 } 
