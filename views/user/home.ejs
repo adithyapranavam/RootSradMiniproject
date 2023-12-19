@@ -41,9 +41,15 @@
             <span class="slider-loader"></span>
         </div>
 
-        <div class="container">
-            
+        <div class="d-flex justify-content-center pb-5">
+            <img src="/assetsmain/images/best.jpeg" width="90" alt="">
+            <h1 class="pt-2">B E S T</h1>
+            <div class="d-flex" >
+                <h1 class="ml-5 pt-2">S E L L E R S</h1>
+            </div>
+        </div>
 
+        <div class="container">
             <div class="widget-filter-area" id="product-filter-area">
 
                 <div class="filter-area-wrapper">
@@ -54,87 +60,52 @@
             </div><!-- End #product-filter-area.widget-filter-area -->
             
             <div class="products-container" data-layout="fitRows">
+               <% products.forEach((data,index)=>{%> 
                 <div class="product-item furniture col-6 col-md-3 col-lg-3">
                     <div class="product product-4">
                         <figure class="product-media">
                             <a href="product.html">
-                                <img src="images/demos/demo-11/products/product-1.jpg" alt="Product image" class="product-image">
+                                <img src="/productImages/<%= data.image[0]%>" alt="Product image" class="product-image" style="height: 260px;">
                             </a>
 
                             <div class="product-action-vertical">
                                 <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
-                            </div><!-- End .product-action -->
+                            </div>
 
                             <div class="product-action">
-                                <a href="popup/quickView.html" class="btn-product btn-quickview" title="Quick view"><span>quick view</span></a>
-                            </div><!-- End .product-action -->
-                        </figure><!-- End .product-media -->
+                                <a href="/productView/<%= data._id%>" class="btn-product "><span>Viw Products</span></a>
+                            </div>
+                        </figure>
 
                         <div class="product-body">
-                            <h3 class="product-title"><a href="product.html">Flow Slim Armchair</a></h3><!-- End .product-title -->
+                            <h3 class="product-title"><a href="product.html"><%=data.name %></a></h3>
 
-                            <div class="product-action">
-                                <a href="#" class="btn-product btn-cart"><span>add to cart</span><i class="icon-long-arrow-right"></i></a>
-                            </div><!-- End .product-action -->
-                        </div><!-- End .product-body -->
-                    </div><!-- End .product -->   
+                            <div class="product-price">
+                                <span class="new-price">₹ <%= data.price %></span>
+                                <span class="old-price" style="text-decoration: line-through;">₹ <%= data.orginalprice %></span>
+                            </div>
+                           
+                            <div class="rating d-flex align-items-center">
+                                <div class="star d-flex align-items-center text-warning">
+                                    <i class='bx bxs-star'></i>
+                                    <i class='bx bxs-star'></i>
+                                    <i class='bx bxs-star'></i>
+                                    <i class='bx bxs-star'></i>
+                                    <i class='bx bx-star'></i>
+                                </div>
+                                <div class="value ms-2">(10)</div>
+                            </div>
+                        </div>
+                    </div>  
                 </div>
-                <div class="product-item furniture col-6 col-md-3 col-lg-3">
-                    <div class="product product-4">
-                        <figure class="product-media">
-                            <a href="product.html">
-                                <img src="images/demos/demo-11/products/product-1.jpg" alt="Product image" class="product-image">
-                            </a>
+                <%})%>
+             </div>
+        </div>
 
-                            <div class="product-action-vertical">
-                                <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
-                            </div><!-- End .product-action -->
+        <div class="more-container d-flex justify-content-center mt-0 mt-7">
+            <a href="/shop" class="btn btn-outline-dark-3 btn-more"><span>more products</span><i
+                    class="la la-refresh"></i></a>
 
-                            <div class="product-action">
-                                <a href="popup/quickView.html" class="btn-product btn-quickview" title="Quick view"><span>quick view</span></a>
-                            </div><!-- End .product-action -->
-                        </figure><!-- End .product-media -->
-
-                        <div class="product-body">
-                            <h3 class="product-title"><a href="product.html">Flow Slim Armchair</a></h3><!-- End .product-title -->
-
-                            <div class="product-action">
-                                <a href="#" class="btn-product btn-cart"><span>add to cart</span><i class="icon-long-arrow-right"></i></a>
-                            </div><!-- End .product-action -->
-                        </div><!-- End .product-body -->
-                    </div><!-- End .product -->
-                    
-                </div><!-- End .product-item -->
-
-
-                <div class="product-item furniture col-6 col-md-3 col-lg-3">
-                    <div class="product product-4">
-                        <figure class="product-media">
-                            <a href="product.html">
-                                <img src="images/demos/demo-11/products/product-1.jpg" alt="Product image" class="product-image">
-                            </a>
-
-                            <div class="product-action-vertical">
-                                <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
-                            </div><!-- End .product-action -->
-
-                            <div class="product-action">
-                                <a href="popup/quickView.html" class="btn-product btn-quickview" title="Quick view"><span>quick view</span></a>
-                            </div><!-- End .product-action -->
-                        </figure><!-- End .product-media -->
-
-                        <div class="product-body">
-                            <h3 class="product-title"><a href="product.html">Flow Slim Armchair</a></h3><!-- End .product-title -->
-
-                            <div class="product-action">
-                                <a href="#" class="btn-product btn-cart"><span>add to cart</span><i class="icon-long-arrow-right"></i></a>
-                            </div><!-- End .product-action -->
-                        </div><!-- End .product-body -->
-                    </div><!-- End .product -->
-                    
-                </div><!-- End .product-item -->
-
-               
         </div><!-- End .more-container -->
     </main><!-- End .main -->
 

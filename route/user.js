@@ -20,6 +20,8 @@ Router.post('/numberValidation',userController.numberValidation);
 Router.get("/signup", userController.signup);
 Router.post("/signup",userController.userRegister) 
 Router.post('/signIn',userController.OTPValidationSignIn); 
+//product view 
+Router.get('/productView/:id',userController.productView);
 
 // success
 Router.get('/success', userController.successTick);
