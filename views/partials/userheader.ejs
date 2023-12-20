@@ -54,17 +54,17 @@
                     <i class="icon-heart-o"></i>
                     <% if(user)
                     { %>
-                        <span class="wishlist-count"></span> 
+                        <span class="wishlist-count">3</span> 
                    <%  } else{ %>
                 <% } %>
                     
                 </a>
 
                 <div class="dropdown cart-dropdown">
-                    <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
+                    <a href="/cart" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
                         <i class="icon-shopping-cart"></i>
                         <% if (user) { %>
-                             <span class="cart-count"></span>
+                             <span class="cart-count"> <%= cartCount %></span>
                              <% } else { %>
   
                                 <% } %>

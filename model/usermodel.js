@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-
+const product = require('../model/productmodel')
 
 const userSchema = new mongoose.Schema(
     {
@@ -31,7 +31,38 @@ const userSchema = new mongoose.Schema(
        },
        isAdmin:{
         type:Boolean
-       }
+       },
+       cart: {
+        items: [{
+            productId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: product
+            },
+            name: {
+                type: String,
+            },
+            quantity: {
+                type: Number,
+                default: 1
+            }, 
+            realPrice: {
+                type: Number,
+            },
+            price: {
+                type: Number,
+            },
+            offer: {
+                type: Number,
+            }
+        }]
+    },
+    grantTotal: {
+        type: Number,
+    },
+    total: {
+        type: Number,
+    }
+
     }
 )
 const user = mongoose.model("user",userSchema);

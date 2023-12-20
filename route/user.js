@@ -23,6 +23,11 @@ Router.post('/signIn',userController.OTPValidationSignIn);
 //product view 
 Router.get('/productView/:id',userController.productView);
 
+//ADD TO CART
+
+Router.get('/cart',userController.loadcart);
+Router.post('/cart/:id',userController.AddCart)
+
 // success
 Router.get('/success', userController.successTick);
 
