@@ -50,23 +50,21 @@
                     </form>
                 </div>
                 
-                <a href="wishlist.html" class="wishlist-link">
+                <a href="/wishlist" class="wishlist-link">
                     <i class="icon-heart-o"></i>
                     <% if(user)
                     { %>
-                        <span class="wishlist-count">3</span> 
+                        <span class="wishlist-count"><%= wishlist %></span> 
                    <%  } else{ %>
-                <% } %>
-                    
+                <% } %>   
                 </a>
-
-                <div class="dropdown cart-dropdown">
-                    <a href="/cart" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
+               
+                <div class="dropdown cart-dropdown"> 
+                    <a href="/cart" class="dropdown-toggle" >
                         <i class="icon-shopping-cart"></i>
                         <% if (user) { %>
                              <span class="cart-count"> <%= cartCount %></span>
                              <% } else { %>
-  
                                 <% } %>
                     </a>
                 </div>
@@ -91,7 +89,7 @@
 
 
 <!-- Plugins JS File -->
-<script src="assets/js/jquery.min.js"></script>
+<!-- <script src="assets/js/jquery.min.js"></script>
 <script src="assets/js/bootstrap.bundle.min.js"></script>
 <script src="assets/js/jquery.hoverIntent.min.js"></script>
 <script src="assets/js/jquery.waypoints.min.js"></script>
@@ -102,10 +100,10 @@
 <script src="assets/js/wNumb.js"></script>
 <script src="assets/js/nouislider.min.js"></script>
 <script src="assets/js/bootstrap-input-spinner.js"></script>
-<script src="assets/js/jquery.magnific-popup.min.js"></script>
+<script src="assets/js/jquery.magnific-popup.min.js"></script> -->
 
 <!-- Main JS File -->
-<script src="assets/js/main.js"></script>
-<script src="assets/js/demos/demo-11.js"></script>
+<!-- <script src="assets/js/main.js"></script>
+<script src="assets/js/demos/demo-11.js"></script> -->
 
 

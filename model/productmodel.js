@@ -25,7 +25,7 @@ const productSchema = new mongoose.Schema({
     },
     image: [{ 
         type: String,
-        require: true
+        required: true
     }],
     category: {
         type: String,
@@ -33,11 +33,11 @@ const productSchema = new mongoose.Schema({
         
     },
     productOffer:{
-        type:String,
+        type:Number,
         required:true,
     },
     quantity: {
-        type: String,
+        type: Number,
         
     },
     availability: {

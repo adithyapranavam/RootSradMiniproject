@@ -30,11 +30,15 @@ const home = async(req,res)=>
 
         if(req.session.userData){
             const userData = await userModel.findOne({email:req.session.userData})
+            console.log(userData,'this is the userdata form sessions');
             const name = userData.name
             const user = true
             const cart = userData.cart.items;
             const cartCount = cart.length;
-            res.render('user/home',{user,products,name,cartCount})
+            const wishcount = userData.wishlist.length
+            const wishlist = userData.wishlist.length
+            console.log(wishlist)
+            res.render('user/home',{user,products,name,cartCount,wishlist,wishcount})
         }else{
             const name = ''
             const user = false
@@ -83,29 +87,30 @@ const login = async(req,res)=>
             if(isExistingUser.password === password)
             {
                 const signinPage = 0;
-                req.session.data = isExistingUser.email
-                const number = isExistingUser.number;
-                let randome = Math.floor(Math.random() * 9000) + 1000;
-                fast2sms.sendMessage({
-                    authorization: API,
-                    message: `Your verification OTP is: ${randome}`,
-                    numbers: [number],
-                })
-                    .then(saveUser());
-                //save randome Number to database then render verify page
-                console.log("this is otp",randome);
-                function saveUser() {
-                    const newUser = new OTP({
-                        number: randome
-                    })
-                    newUser.save()
-                        .then(() => {
-                            res.render('user/verification', {  signinPage });
-                        })
-                        .catch((error) => {
-                            console.log("error generating numb", error);
-                        });
-                }
+                req.session.userData = isExistingUser.email
+                res.redirect('/')
+                // const number = isExistingUser.number;
+                // let randome = Math.floor(Math.random() * 9000) + 1000;
+                // fast2sms.sendMessage({
+                //     authorization: API,
+                //     message: `Your verification OTP is: ${randome}`,
+                //     numbers: [number],
+                // })
+                //     .then(saveUser());
+                // //save randome Number to database then render verify page
+                // console.log("this is otp",randome);
+                // function saveUser() {
+                //     const newUser = new OTP({
+                //         number: randome
+                //     })
+                //     newUser.save()
+                //         .then(() => {
+                //             res.render('user/verification', {  signinPage });
+                //         })
+                //         .catch((error) => {
+                //             console.log("error generating numb", error);
+                //         });
+                // }
             }
         }
         catch(err)
@@ -231,7 +236,7 @@ const productView = async(req,res)=>
 {
     try{
         const id = req.params.id;
-        let cart,cartCount;
+        let cart,cartCount,wishlist;
         if(req.session.userData)
         {
         const userData = await userModel.findOne({email:req.session.userData})
@@ -240,10 +245,11 @@ const productView = async(req,res)=>
         const cate = data.category;
         cart = userData.cart.items;
         cartCount = cart.length;
+        const wishlist = userData.wishlist.length
         const category = await product.find({ category: cate }).sort({ _id: -1 }).limit(4);
         const user = true;
 
-        res.render('user/productView',{data,name,user,category,cartCount})  
+        res.render('user/productView',{data,name,user,category,cartCount,wishlist})  
     }
     else{
         const name = ''
@@ -252,7 +258,7 @@ const productView = async(req,res)=>
         const cate = data.category;
         const category = await product.find({ category: cate }).sort({ _id: -1 }).limit(4);
 
-        res.render('user/productView',{data,name,user,category,cartCount})  
+        res.render('user/productView',{data,name,user,category,cartCount,wishlist})  
     }
 }
     catch (error) {
@@ -403,18 +409,25 @@ const successTick = (req, res) => {
 //cart section
 const loadcart = async (req, res) => {
     try {
-        console .log(" i am loadcart")
         const userEmail = req.session.userData;
-        if (req.session.user) {
+        if (req.session.userData) {
             const userData = await userModel.findOne({email:userEmail})
             const name = userData.name
+            
             const similarproducts = await product.find({ availability: true }).sort({ name: -1 }).limit(4)
             const cartItems = userData.cart.items
+            // console.log(cartItems,'this is  the cart items');
+
             const cartCount = cartItems.length
-            console.log(cartCount+"HIIII");
+            const wishlist = userData.wishlist.length
             const cartProductIds = cartItems.map(item => item.productId);
             const cartProducts = await product.find({ _id: { $in: cartProductIds } });
-            const productsPrice = cartItems.reduce((accu, element) => accu + (element.quantity * element.price), 0);
+         
+
+            const productsPrices = cartItems.reduce((accu, element) => accu + (element.quantity * element.realPrice), 0);
+            const productsPrice = Math.round(productsPrices).toFixed(2);
+            
+
             const totalQuantity = cartItems.reduce((total, item) => total + item.quantity, 0);
             let totalPrice = 0;
             for (const item of cartItems) {
@@ -427,7 +440,9 @@ const loadcart = async (req, res) => {
             }
             const user = true
             const discount = Math.abs(totalPrice - productsPrice);
-            res.render('user/cart', { message: "Login Page", user, name, cartCount, cartItems, cartProducts, productsPrice,totalQuantity,discount,similarproducts })
+            
+            res.render('user/cart', { message: "Login Page", user, name, cartCount, cartItems, cartProducts, productsPrice,totalQuantity,discount,similarproducts,wishlist,userData, totalPrice, })
+            console.log(cartItems+"i am cartItems")
         } else {
             res.redirect('/login')
         }
@@ -441,8 +456,7 @@ const loadcart = async (req, res) => {
 // ADD TO CART
 
 const AddCart = async(req,res)=>
-{
-    
+{ 
     const id = req.params.id
     const userEmail = req.session.userData;
     try{
@@ -450,25 +464,30 @@ const AddCart = async(req,res)=>
         const userData = await userModel.findOne({email: userEmail})
         const cartItems = userData.cart.items
         const existingCartItem = cartItems.find(item => item.productId.toString() === id);
+
         const data = await product.findOne({_id:id});
         const productprice = data.price
         
-        if (existingCartItem) {
+        if (existingCartItem) { 
             existingCartItem.quantity += 1; 
             existingCartItem.price = existingCartItem.quantity * productprice
+           
         }
-        else {
+        else
+         {
             const newcartitem = {
-                name:product.name,
+                name:data.name,
                 productId: id,
                 quantity: 1,
-                realPrice: product.price,
-                price: product.originalprice,
-                offer: product.price
+                realPrice: data.orginalprice,
+                price: data.orginalprice,
+                offer: data.price,
+                image:data.image
             }
             userData.cart.items.push(newcartitem)
     }
     await userData.save()
+ 
     res.json('successfully cart u r product')
 }
    catch(err)
@@ -478,6 +497,164 @@ const AddCart = async(req,res)=>
 
 }
 
+const cartQuantityUpdate = async (req, res) => {   
+   
+    const cartId = req.params.itemId;
+    const data = Number(req.body.quantity);
+    const userEmail = req.session.userData;
+    try {
+        const userData = await userModel.findOne({ email: userEmail });
+        const cartItems = userData.cart.items;
+        const cartItem = userData.cart.items.id(cartId);
+        
+        // const cartQuantityPre = cartItem.quantity;
+        // console.log(object);
+
+        const CartQuantity = cartItem.quantity = data;
+        const offerPrice = cartItem.offer;
+        const cartPrice = cartItem.realPrice = offerPrice * CartQuantity;
+        const products = await product.findById(cartItem.productId);
+        const ProQuantity = products.quantity;
+
+        
+        // const count = CartQuantity - cartQuantityPre;
+        // product.quantity -= count;
+
+        const GPrice = cartItems.reduce((accu, element) => accu + (element.quantity * element.price), 0);
+        const T = cartItems.reduce((accu, element) => accu + element.realPrice, 0);
+        const GrandPrice = userData.grantTotal = GPrice;
+        const Total=userData.total = T;
+
+        await userData.save();
+
+        const grantTotal = GrandPrice;
+        const total = Total;
+        const discount = grantTotal - total;
+        res.json({ cartPrice, grantTotal, total, discount, ProQuantity });
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const updateCart = async(req,res)=>
+{
+
+        const idvalue = req.body.idvalule;
+        const sessvalue = req.body.sessvalues;
+        const changenum = req.body.change;
+
+        var user = await userModel.findByIdAndUpdate({ _id: sessvalue });
+    
+        const index = user.cart.items.indexOf(
+            user.cart.items.find((val) => {
+                return val.productId == idvalue;
+            })
+        );
+    
+        if (changenum == 1) {
+            const quantitys = user.cart.items[index].quantity;
+            user.cart.items[index].quantity++;
+            await user.save();
+            let valp = user.cart.items[index].realPrice;
+            let valq = user.cart.items[index].quantity;
+            user.cart.items[index].price = valp * valq;
+            await user.save();
+    
+        } else {
+            const quantitys = user.cart.items[index].quantity;
+    
+            user.cart.items[index].quantity--;
+    
+            await user.save();
+    
+            let valp = user.cart.items[index].realPrice;
+            let valq = user.cart.items[index].quantity;
+            user.cart.items[index].price = valp * valq;
+            await user.save();  
+        }
+    
+    //     await userModel.findById({ _id: sessvalue })
+    
+    //         .then((data) => {
+    //             if (!data) {
+    //                 res.status(404).send({ message: "Not found user with id" });
+    //             } else {
+    //                 res.json(100);
+    //             }
+    //         })
+    //         .catch((err) => {
+    //             res.status(500).send({ message: "Error retriving user with id" });
+    // });
+res.json(100);
+}  
+
+
+const cartDelete = async (req,res) =>
+{
+  
+    const id = req.params.id
+    const userEmail = req.session.userData
+    try{
+        let cartDelete = await userModel.findOne({ email: userEmail })
+
+        let cardelete = await userModel.updateOne({ email: userEmail }, { $pull: { 'cart.items': { _id: id } } });
+     
+         res.redirect('/cart');
+    }
+    catch (err) {
+        console.log("detaild page error" + err)
+    }
+   
+}
+
+//WISHLIST
+const WishListLoad = async (req, res) => {
+    try {
+        const userEmail = req.session.userData;
+        if (req.session.userData) 
+        {
+            const userData = await userModel.findOne({ email: userEmail });
+            const name =  userData.name
+            const productData = userData.wishlist;
+            const cart = userData.cart.items;
+            const cartCount = cart.length;
+            const wishlist = userData.wishlist.length
+            const productId = productData.map(items => items.productId);
+            const productDetails = await product.find({ _id: { $in: productId } });
+            const price = productDetails.originalprice - (productDetails.originalprice * productDetails.productOffer) / 100
+            const user = true
+            res.render('user/wishlist', { user, price, productDetails, cartCount,name,wishlist })
+        } else {
+            res.redirect('/login')
+        }
+    } catch (err) {
+        console.log("detaild page error" + err)
+    }
+}
+const addingWishList = async (req, res) =>
+ {
+    const productId = req.params.id;
+    const userEmail = req.session.userData;
+    try {
+       
+        const userData = await userModel.findOne({ email: userEmail });
+        const productExist = userData.wishlist.map(items => items.productId.toString() === productId);
+
+        if (productExist.includes(true)) {
+            return res.json("Already Exist");
+        } else {
+            const WhishList = {
+                productId: productId
+            }
+            userData.wishlist.push(WhishList);
+            await userData.save();
+            return res.json('server got this....');
+        }
+    } catch (error) {
+        console.log("detaild page error" + error)
+    }
+}
 
 module.exports = { 
     home, 
@@ -494,6 +671,12 @@ module.exports = {
     // newPassword
     productView,
     loadcart,
-    AddCart
+    AddCart,
+    cartQuantityUpdate,
+    addingWishList,
+    WishListLoad,
+    cartDelete,
+    updateCart,
+    
 }
 

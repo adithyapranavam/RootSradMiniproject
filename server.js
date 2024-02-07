@@ -19,6 +19,9 @@ dotenv.config({ path: 'config.env' });
 
 // session and cookie
 app.use(cookieParser());
+// url encoded
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use(session({
         secret: uuidv4(),

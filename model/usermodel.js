@@ -43,7 +43,7 @@ const userSchema = new mongoose.Schema(
             },
             quantity: {
                 type: Number,
-                default: 1
+                default: 0
             }, 
             realPrice: {
                 type: Number,
@@ -61,7 +61,15 @@ const userSchema = new mongoose.Schema(
     },
     total: {
         type: Number,
+    },
+    
+    wishlist: 
+    [{
+    productId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: product
     }
+}]
 
     }
 )

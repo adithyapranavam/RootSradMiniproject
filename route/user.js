@@ -16,7 +16,7 @@ Router.get('/forgotPassword',userController.forGotPassword)
 Router.post('/numberValidation',userController.numberValidation);
 // Router.post('/newPassword',userController.newPassword);
 
-//Sign Up 
+//Sign Up  
 Router.get("/signup", userController.signup);
 Router.post("/signup",userController.userRegister) 
 Router.post('/signIn',userController.OTPValidationSignIn); 
@@ -24,9 +24,15 @@ Router.post('/signIn',userController.OTPValidationSignIn);
 Router.get('/productView/:id',userController.productView);
 
 //ADD TO CART
-
 Router.get('/cart',userController.loadcart);
 Router.post('/cart/:id',userController.AddCart)
+Router.post('/cart/quantityUpdate/:itemId', userController.cartQuantityUpdate); 
+Router.put('/cart/update',userController.updateCart)
+Router.get('/cartDelete/:id',userController.cartDelete)
+
+//ADD TO wishlist
+Router.get('/wishlist',userController.WishListLoad) 
+Router.post('/wishlist/:id',userController.addingWishList)
 
 // success
 Router.get('/success', userController.successTick);

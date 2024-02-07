@@ -57,12 +57,12 @@
         
                     <div class="col-md-6">
                         <div class="product-details">
-                            <h1 class="product-title"><%= data.name %></h1><!-- End .product-title -->
+                            <h1 class="product-title"><%= data.name %></h1>
 
                             <div class="ratings-container">
                                 <div class="ratings">
-                                    <div class="ratings-val" style="width: 80%;"></div><!-- End .ratings-val -->
-                                </div><!-- End .ratings -->
+                                    <div class="ratings-val" style="width: 80%;"></div>
+                                </div>
                                 <a class="ratings-text" href="#product-review-link" id="review-link">( 10 Reviews )</a>
                             </div>
                             <div class="product-price">
@@ -72,40 +72,37 @@
 
                             <div class="product-content">
                                 <p> <%= data.discription %></p>
-                            </div><!-- End .product-content -->
+                            </div>
 
                           
-                            <div class="details-filter-row details-row-size">
-                                <label for="qty">Qty:</label>
-                                <div class="product-details-quantity">
-                                    <input type="number" id="qty" class="form-control" value="1" min="1" max="10" step="1" data-decimals="0" required>
-                                </div><!-- End .product-details-quantity -->
-                            </div><!-- End .details-filter-row -->
+                          
 
                            
                             <div class="product-details-action">
                                 <%if(user){%>
-                                    <form action="" method="post" id="CartForm">
+                                    <form action="" method="post" id="CartForm" style="margin-right: 10;">
                                         <input type="hidden" value="<%= data._id%>" id="cartProductId">
                                        <button class="btn-product btn-cart add-to-cart"><span>Add to Cart</span></button>
                                     </form>
                                   
-
-                                    <!-- <form action="" method="get" id="WhishList">
+                                    <form action="" method="get" id="WhishList">
                                         <input type="hidden" value="<%= data._id%>" id="whishlistProductId">
-                                       <button   class="btn-product btn-wishlist"><span>Add to Wishlist</span></button>
-                                    </form> -->
+                                       <button   class="btn-product btn-cart add-to-cart btn-wishlist"><span>Add to Wishlist</span></button>
+                                    </form>
+
                                     <%}else{%>
-                                            <form action="/login" method="get" id="CartForm">
+                                            <form action="/login" method="get" id="CartForm" style="margin-right: 10;">
                                                 <input type="hidden" value="<%= data._id%>" id="cartProductId">
                                            <button class="btn-product btn-cart add-to-cart"><span>Add to Cart</span></button>
                                         </form>
                                       
-                                        <!-- <form action="/login" method="get" id="WhishList">
+                                        <form action="/login" method="get" id="WhishList">
                                             <input type="hidden" value="<%= data._id%>" id="cartProductId">
-                                           <button   class="btn-product btn-wishlist"><span>Add to Wishlist</span></button>
-                                        </form> -->
-                                        <%}%>
+                                           <button   class="btn-product btn-cart add-to-cart btn-wishlist"><span>Add to Wishlist</span></button>
+                                        </form>
+
+                                    <%}%>
+
                             </div>
                             <p id="CartSuccMsg"></p>
                             <div class="pt-3">
@@ -278,8 +275,10 @@
                 url: '/cart/<%= data._id%>',
                 success: function (res) {
                     succMsg.textContent = "Product Successfully Added Your Cart"
+                    
                     setTimeout(() => {
                        succMsg.style.display = 'none';
+                       window.location.reload()
                        }, 2000);
                     const currentCount = parseInt(cartItemCount.textContent) || 0;
                     const newCount = currentCount + 1;
@@ -290,6 +289,29 @@
         })
     })
   </script> 
+  <script>
+    const form = document.getElementById('WhishList');
+    const whishlistSuccMsg = document.getElementById('CartSuccMsg');
+    form.addEventListener('submit',(event)=>{
+        event.preventDefault();
+    $.ajax({
+       url: '/wishlist/<%= data._id%>',
+       type:'post',
+       success:function (res){
+        if(res == "Already Existe"){
+            whishlistSuccMsg.innerText = "Product Already Existe In The WhishList"
+        }else{
+            whishlistSuccMsg.innerText = "Product Successfully Added"
+            setTimeout(() => {
+                       whishlistSuccMsg.style.display = 'none';
+                       window.location.reload()
+                       }, 2000);
+        }
+        
+       }
+    })
+    })
+  </script>
 
 
 <%- include('../partials/userfooter.ejs') %>
