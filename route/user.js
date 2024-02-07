@@ -33,6 +33,8 @@ Router.get('/cartDelete/:id',userController.cartDelete)
 //ADD TO wishlist
 Router.get('/wishlist',userController.WishListLoad) 
 Router.post('/wishlist/:id',userController.addingWishList)
+Router.put('/wishlist/cart',userController.addingWhishListtoCart)
+Router.get('/wishlist/:id',userController.WhishProductDelete)
 
 // success
 Router.get('/success', userController.successTick);

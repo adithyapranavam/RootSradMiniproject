@@ -66,10 +66,13 @@
                                 </h3>
                             </div>
                         </td>
-                        <td class="price-col">₹<%= data.price %></td>
+                        <td class="price-col">₹<%=data.orginalprice %></td>
                         <td class="stock-col"><span class="in-stock">In stock</span></td>
                         <td class="action-col">
-                            <button class="btn btn-block btn-outline-primary-2"><i class="icon-cart-plus"></i>Add to Cart</button>
+
+                            <a href="" class="btn btn-block btn-outline-primary-2 addToCart" 
+                            data-productId="<%=data._id%>">
+                            <span class="text-black ps-2">Add to cart</span></a>
                         </td>
                         <td class="remove-col"><button class="btn-remove"><i class="icon-close"></i></button></td>
                     </tr>
@@ -80,5 +83,38 @@
     </div>
 </main>
 <% } %>
+<script>
+ document.addEventListener('DOMContentLoaded', function (event) {
+    event.preventDefault()
+      const addToCartLinks = document.querySelectorAll('.addToCart');
+      const cartItemCount = document.getElementById('cartItemCount');
+      console.log("inside addEvent")
+
+      addToCartLinks.forEach(function (link) {
+          link.addEventListener('click', function (event) {
+              event.preventDefault();
+
+              const productId = this.getAttribute('data-productid');
+              console.log(productId,"productId===")
+
+              fetch('/wishlist/cart', {
+                  method: 'PUT',
+                  headers: {
+                      'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ productId: productId })
+              })
+                  .then(function (response) {
+                        setTimeout(() => {
+                       window.location.reload()
+                       }, 2000);
+                  })
+                  .catch(function (error) {
+                      console.log(error)
+                  });
+          });
+      });
+  });
+        </script>
 
 <%- include('../partials/userfooter.ejs') %>

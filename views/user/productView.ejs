@@ -87,18 +87,20 @@
                                   
                                     <form action="" method="get" id="WhishList">
                                         <input type="hidden" value="<%= data._id%>" id="whishlistProductId">
-                                       <button   class="btn-product btn-cart add-to-cart btn-wishlist"><span>Add to Wishlist</span></button>
+                                       <button class="btn-product btn-cart add-to-cart btn-wishlist"><span>Add to Wishlist</span></button>
                                     </form>
 
-                                    <%}else{%>
-                                            <form action="/login" method="get" id="CartForm" style="margin-right: 10;">
-                                                <input type="hidden" value="<%= data._id%>" id="cartProductId">
-                                           <button class="btn-product btn-cart add-to-cart"><span>Add to Cart</span></button>
+                                    <%} else {%>
+                                        <form action="/login" method="get" id="CartForm" style="margin-right:10">
+                                            <input type="hidden" value="<%= data._id%>" id="cartProductId">
+                                        <button  onclick="list(this.form)" class="btn-product btn-cart add-to-cart">
+                                            <span>Add to Cart</span>
+                                        </button>
                                         </form>
                                       
                                         <form action="/login" method="get" id="WhishList">
                                             <input type="hidden" value="<%= data._id%>" id="cartProductId">
-                                           <button   class="btn-product btn-cart add-to-cart btn-wishlist"><span>Add to Wishlist</span></button>
+                                           <button  onclick="list(this.form)" class="btn-product btn-cart add-to-cart btn-wishlist"><span>Add to Wishlist</span></button>
                                         </form>
 
                                     <%}%>
@@ -234,14 +236,14 @@
             <% category.forEach((data,index)=>{%>
             <div class="product product-7 text-center">
                 <figure class="product-media">
-                    <a href="">
+                    <a href="/productView/<%= data._id%>">
                         <img src="/productImages/<%= data.image[0]%>" alt="Product image" class="product-image">
                     </a>
                     <div class="product-action-vertical">
                         <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
                     </div>
                     <div class="product-action">
-                        <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
+                        <a href="/productView/<%= data._id%>" class="btn-product btn-cart"><span>add to cart</span></a>
                     </div>
                 </figure>
                 <div class="product-body">
@@ -313,5 +315,21 @@
     })
   </script>
 
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
+<script>
+    function list(form) {
+   
+    swal({
+      title: "OOPS!!",
+      text: " Please Login !!",
+      buttons: true,
+      dangerMode: true,
+    }).then((willDelete) => {
+      if (willDelete) {
+        form.submit();
+      } 
+    });
+  }
+  </script>
 <%- include('../partials/userfooter.ejs') %>

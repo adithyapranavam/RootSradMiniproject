@@ -439,10 +439,10 @@ const loadcart = async (req, res) => {
                 }
             }
             const user = true
-            const discount = Math.abs(totalPrice - productsPrice);
+            const discount = Math.abs(totalPrice - productsPrice).toFixed(2);
+            totalPrice = Math.abs(totalPrice).toFixed(2);
             
             res.render('user/cart', { message: "Login Page", user, name, cartCount, cartItems, cartProducts, productsPrice,totalQuantity,discount,similarproducts,wishlist,userData, totalPrice, })
-            console.log(cartItems+"i am cartItems")
         } else {
             res.redirect('/login')
         }
@@ -611,18 +611,25 @@ const cartDelete = async (req,res) =>
 //WISHLIST
 const WishListLoad = async (req, res) => {
     try {
+        console.log("wishlistload");
         const userEmail = req.session.userData;
         if (req.session.userData) 
         {
-            const userData = await userModel.findOne({ email: userEmail });
-            const name =  userData.name
-            const productData = userData.wishlist;
-            const cart = userData.cart.items;
+            const userDetails = await userModel.findOne({ email: userEmail });
+            const name =  userDetails.name
+            const productData = userDetails.wishlist;
+            // console.log(productData);
+            const cart = userDetails.cart.items;
             const cartCount = cart.length;
-            const wishlist = userData.wishlist.length
+            const wishlist = userDetails.wishlist.length
+            // item.productId.toString() === id
             const productId = productData.map(items => items.productId);
+            // console.log(productId+"iam productId");
             const productDetails = await product.find({ _id: { $in: productId } });
+            console.log(productDetails+"i am productDetails");
             const price = productDetails.originalprice - (productDetails.originalprice * productDetails.productOffer) / 100
+            // const price = 100
+            console.log(price,"price....")
             const user = true
             res.render('user/wishlist', { user, price, productDetails, cartCount,name,wishlist })
         } else {
@@ -638,8 +645,8 @@ const addingWishList = async (req, res) =>
     const userEmail = req.session.userData;
     try {
        
-        const userData = await userModel.findOne({ email: userEmail });
-        const productExist = userData.wishlist.map(items => items.productId.toString() === productId);
+        const userDetails = await userModel.findOne({ email: userEmail });
+        const productExist = userDetails.wishlist.map(items => items.productId.toString() === productId);
 
         if (productExist.includes(true)) {
             return res.json("Already Exist");
@@ -647,12 +654,59 @@ const addingWishList = async (req, res) =>
             const WhishList = {
                 productId: productId
             }
-            userData.wishlist.push(WhishList);
-            await userData.save();
+            userDetails.wishlist.push(WhishList);
+            await userDetails.save();
             return res.json('server got this....');
         }
     } catch (error) {
         console.log("detaild page error" + error)
+    }
+}
+const addingWhishListtoCart = async (req, res) => {
+
+          console.log("hellow addtowishlisttocart")
+             const id = req.body.productId;
+             const userEmail = req.session.userData;
+        try {
+            console.log('hello i am the wishlist adding to cart')
+            
+            const userDetails = await userModel.findOne({ email: userEmail });
+            const cartItems = userDetails.cart.items;
+            const existingCartItem = cartItems.find(item => item.productId.toString() === id);
+            const cartPrtoduct = await product.findOne({ _id: id });
+            console.log(cartPrtoduct+"cartProtoduct")
+            const productPrice = cartPrtoduct.price;
+    
+            if (existingCartItem) {
+                existingCartItem.quantity += 1;
+                existingCartItem.price = existingCartItem.quantity * productPrice;
+            } else {
+                const newCartItem = {
+                    productId: id,
+                    quantity: 1,
+                    price: cartPrtoduct.orginalprice,
+                    realPrice: cartPrtoduct.orginalprice
+                };
+                userDetails.cart.items.push(newCartItem);
+            }
+        await userDetails.save();
+
+        res.json("successfully cart u r product")
+    } catch (error) {
+        console.log('Error adding to cart:', error);
+    }
+}
+const WhishProductDelete = async (req, res) => {
+    const productId = req.params.id;
+    const userEmail = req.session.email;
+    try {
+        await userModel.findOneAndUpdate(
+            { email: userEmail },
+            { $pull: { wishlist: { productId: productId } } }
+        );
+        res.redirect("/whishlist");
+    } catch (error) {
+        console.log("whish deleting Error" + error)
     }
 }
 
@@ -677,6 +731,8 @@ module.exports = {
     WishListLoad,
     cartDelete,
     updateCart,
+    addingWhishListtoCart,
+    WhishProductDelete
     
 }
 
