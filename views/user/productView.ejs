@@ -1,6 +1,8 @@
 
 <main class="main">
-    <%- include('../partials/userheader.ejs')%>
+   
+    <%- include('../partials/userheader.ejs')%> 
+    <%- include('../layouts.ejs') -%>
     <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
         <div class="container d-flex align-items-center">
             <ol class="breadcrumb">
@@ -239,9 +241,6 @@
                     <a href="/productView/<%= data._id%>">
                         <img src="/productImages/<%= data.image[0]%>" alt="Product image" class="product-image">
                     </a>
-                    <div class="product-action-vertical">
-                        <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
-                    </div>
                     <div class="product-action">
                         <a href="/productView/<%= data._id%>" class="btn-product btn-cart"><span>add to cart</span></a>
                     </div>

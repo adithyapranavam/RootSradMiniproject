@@ -36,6 +36,12 @@ Router.post('/wishlist/:id',userController.addingWishList)
 Router.put('/wishlist/cart',userController.addingWhishListtoCart)
 Router.get('/wishlist/:id',userController.WhishProductDelete)
 
+//CHECKOUT
+Router.get('/CheckOutPage',userController.Checkout)
+
+
+
+
 // success
 Router.get('/success', userController.successTick);
 

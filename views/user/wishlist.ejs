@@ -74,7 +74,11 @@
                             data-productId="<%=data._id%>">
                             <span class="text-black ps-2">Add to cart</span></a>
                         </td>
-                        <td class="remove-col"><button class="btn-remove"><i class="icon-close"></i></button></td>
+                        <td class="remove-col">
+                            <a href="/wishlist/<%=data._id%>">
+                            <button  class="btn-remove"><i class="icon-close"></i></button>
+                            </a>
+                        </td>
                     </tr>
                     <% }) %>
                 </tbody>

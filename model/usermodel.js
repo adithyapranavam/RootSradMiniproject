@@ -69,9 +69,38 @@ const userSchema = new mongoose.Schema(
         type: mongoose.Schema.Types.ObjectId,
         ref: product
     }
-}]
-
+}],
+address: [{
+    name: {
+        type: String,
+        required: true
+    },
+    houseName: {
+        type: String,
+        required: true
+    },
+    street: {
+        type: String,
+        required: true
+    },
+    city: {
+        type: String,
+        required: true
+    },
+    state: {
+        type: String,
+        required: true
+    },
+    phone: {
+        type: Number,
+        required: true
+    },
+    postalCode: {
+        type: Number,
+        required: true
     }
-)
+}]
+})
+
 const user = mongoose.model("user",userSchema);
 module.exports = user;

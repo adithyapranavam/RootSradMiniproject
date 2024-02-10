@@ -1,5 +1,6 @@
 const userModel = require('../model/usermodel')
 const product = require('../model/productmodel')
+const couponModle = require('../model/coupon');
 const bcrypt = require('bcrypt');
 const fast2sms = require('fast-two-sms');  
 const OTP = require('../model/otpmodel');  
@@ -424,9 +425,9 @@ const loadcart = async (req, res) => {
             const cartProducts = await product.find({ _id: { $in: cartProductIds } });
          
 
-            const productsPrices = cartItems.reduce((accu, element) => accu + (element.quantity * element.realPrice), 0);
+            const productsPrices = cartItems.reduce((accu, element) => accu + (element.quantity * element.price), 0);
             const productsPrice = Math.round(productsPrices).toFixed(2);
-            
+            console.log(productsPrices,'this is teh product price');
 
             const totalQuantity = cartItems.reduce((total, item) => total + item.quantity, 0);
             let totalPrice = 0;
@@ -479,9 +480,8 @@ const AddCart = async(req,res)=>
                 name:data.name,
                 productId: id,
                 quantity: 1,
-                realPrice: data.orginalprice,
-                price: data.orginalprice,
-                offer: data.price,
+                realPrice: data.price,
+                price: data.price,
                 image:data.image
             }
             userData.cart.items.push(newcartitem)
@@ -539,7 +539,7 @@ const cartQuantityUpdate = async (req, res) => {
 
 const updateCart = async(req,res)=>
 {
-
+console.log("i am updatecart======");
         const idvalue = req.body.idvalule;
         const sessvalue = req.body.sessvalues;
         const changenum = req.body.change;
@@ -628,8 +628,7 @@ const WishListLoad = async (req, res) => {
             const productDetails = await product.find({ _id: { $in: productId } });
             console.log(productDetails+"i am productDetails");
             const price = productDetails.originalprice - (productDetails.originalprice * productDetails.productOffer) / 100
-            // const price = 100
-            console.log(price,"price....")
+            // console.log(price,"price....")
             const user = true
             res.render('user/wishlist', { user, price, productDetails, cartCount,name,wishlist })
         } else {
@@ -664,19 +663,16 @@ const addingWishList = async (req, res) =>
 }
 const addingWhishListtoCart = async (req, res) => {
 
-          console.log("hellow addtowishlisttocart")
              const id = req.body.productId;
              const userEmail = req.session.userData;
         try {
-            console.log('hello i am the wishlist adding to cart')
-            
+        
             const userDetails = await userModel.findOne({ email: userEmail });
             const cartItems = userDetails.cart.items;
             const existingCartItem = cartItems.find(item => item.productId.toString() === id);
             const cartPrtoduct = await product.findOne({ _id: id });
             console.log(cartPrtoduct+"cartProtoduct")
             const productPrice = cartPrtoduct.price;
-    
             if (existingCartItem) {
                 existingCartItem.quantity += 1;
                 existingCartItem.price = existingCartItem.quantity * productPrice;
@@ -697,16 +693,66 @@ const addingWhishListtoCart = async (req, res) => {
     }
 }
 const WhishProductDelete = async (req, res) => {
+
     const productId = req.params.id;
-    const userEmail = req.session.email;
+    const userEmail = req.session.userData;
     try {
-        await userModel.findOneAndUpdate(
-            { email: userEmail },
-            { $pull: { wishlist: { productId: productId } } }
-        );
-        res.redirect("/whishlist");
+        
+        let wishDelete = await userModel.findOne({ email: userEmail })
+        let wisDelete = await userModel.updateOne({email:userEmail},{ $pull: { wishlist: { productId: productId } } })
+        res.redirect("/wishlist");
     } catch (error) {
         console.log("whish deleting Error" + error)
+    }
+}
+
+   //CHECKOUT
+const Checkout = async (req, res) => {
+    const userEmail = req.session.userData;
+    if(req.session.userData){
+        try {
+            console.log("i am checkout")
+            const userDetails = await userModel.findOne({ email: userEmail });
+            console.log(userDetails);
+            
+            const currentUserID = userDetails._id;
+            // console.log(currentUserID+"+++");
+            const name =  userDetails.name
+            const cartItems = userDetails.cart.items;
+            const cartCount = cartItems.length;
+            const coupons = await couponModle.find();
+            const wishlist = userDetails.wishlist.length;
+            const coupon = coupons.filter(coupon => !coupon.userId.includes(currentUserID));
+            const cartProductIds = cartItems.map(item => item.productId.toString());
+            const cartProducts = await product.find({ _id: { $in: cartProductIds } });
+            const totalP_Prices = cartItems.reduce((total, items) => total + parseFloat(items.realPrice), 0);
+            const totalP_Price = Math.round( totalP_Prices).toFixed(2);
+            console.log(totalP_Price+"total");
+            const address = userDetails.address;
+            let totalPrice = 0;
+            totalPrice = cartItems.reduce((total,item) => total + item.price,0);
+            const discount = Math.abs(totalP_Price - totalPrice)
+            console.log(totalPrice+"dis");
+            const user = true;
+            res.render('user/checkOut', {
+                title: "Check Out",
+                user,
+                cartItems,
+                cartProducts,
+                discount,
+                totalP_Price,
+                totalPrice,
+                address,
+                cartCount,
+                wishlist,
+                name,
+                coupon
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }else{
+        res.redirect('/login')
     }
 }
 
@@ -732,7 +778,8 @@ module.exports = {
     cartDelete,
     updateCart,
     addingWhishListtoCart,
-    WhishProductDelete
+    WhishProductDelete,
+    Checkout
     
 }
 

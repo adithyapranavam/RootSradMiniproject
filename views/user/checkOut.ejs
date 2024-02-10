@@ -1,0 +1,146 @@
+
+<%- include('../partials/userheader.ejs')%>
+
+<main class="main">
+    <%- include('../layouts.ejs')%>
+    <div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.jpg')">
+        <div class="container">
+            <h1 class="page-title">Checkout<span>Shop</span></h1>
+        </div>
+    </div>
+    <nav aria-label="breadcrumb" class="breadcrumb-nav">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item"><a href="#">Shop</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Checkout</li>
+            </ol>
+        </div>
+    </nav>
+
+<div class="page-content mb-4">
+    <div class="checkout">
+        <div class="container">
+                <form action="#">
+                    <div class="row">
+                        <div class="col-lg-9">
+                            <h2 class="checkout-title">Billing Details</h2>
+                                <div class="row" >
+                                    <div class="col-sm-6">
+                                        <label>Full Name *</label>
+                                        <input type="text" class="form-control" required>
+                                    </div>
+                                </div>
+
+                                <label>Country *</label>
+                                <input type="text" class="form-control" required>
+
+                                <label>Street address *</label>
+                                <input type="text" class="form-control" placeholder="House number and Street name" required>
+                                
+
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <label>Town *</label>
+                                        <input type="text" class="form-control" required>
+                                    </div>
+
+                                    <div class="col-sm-6">
+                                        <label>State *</label>
+                                        <input type="text" class="form-control" required>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <label>Postcode *</label>
+                                        <input type="text" class="form-control" required>
+                                    </div>
+
+                                    <div class="col-sm-6">
+                                        <label>Phone *</label>
+                                        <input type="tel" class="form-control" required>
+                                    </div>
+                                </div>
+
+                                <label>Email address *</label>
+                                <input type="email" class="form-control" required>
+
+                                <div class="row f-flex align-items-end">
+                                  <div class="p-2 col-lg-6 billing_button">
+                                    <button class="btn btn-danger p-2" type="submit">
+                                        Add New Address
+                                    </button>
+                                  </div> 
+                                </div> 
+                        </div>
+                        <aside class="col-lg-3">
+                            <div class="summary">
+                                <h3 class="summary-title">Your Order</h3>
+
+                                <table class="table table-summary">
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        <% cartProducts.forEach((data)=>{%>
+                                        <tr>
+                                            <td><a href="#"><%=data.name%></a></td>
+                                            <td>₹<%=data.price%></td>
+                                        </tr>
+                                        <%}) %>
+                                        <tr class="summary-subtotal">
+                                            <td>Subtotal:</td>
+                                            <td>₹<%=totalP_Price %></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Shipping:</td>
+                                            <td>Free shipping</td>
+                                        </tr>
+                                        <tr class="summary-total">
+                                            <td>Total:</td>
+                                            <td>$160.00</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            
+                                <div class="accordion-summary" id="accordion-payment">
+                                       
+                                            <div class="card-header" id="heading-3">
+                                                <h2 class="card-title">
+    
+                                                    <input type="radio" value="COD" name="payment" checked> Cash on
+                                                    delivery<br>
+                                                    <input type="radio" value="online payment" name="payment" class="mt-1">
+                                                    Online payment<br>
+                                                </h2>
+                                                <br>
+                                <button type="submit" class="btn btn-outline-primary-2 btn-order btn-block">
+                                    <span class="btn-text">Place Order</span>
+                                    <span class="btn-hover-text">Proceed to Checkout</span>
+                                </button>
+                            </div>
+                          
+                               <br>
+                                    <div class="cart-discount">
+                                      <form action="#">
+                                        <div class="input-group">
+                                          <input type="text"class="form-control"required placeholder="coupon code...."/>
+                                            <button style="height:40px" class="btn btn-outline-primary-2" type="submit">
+                                              <i  class ="icon-long-arrow-right"></i>
+                                            </button>
+                                        </div>
+                                      </form>
+                                    </div>
+                        </aside>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+<%- include('../partials/userfooter.ejs') %>
