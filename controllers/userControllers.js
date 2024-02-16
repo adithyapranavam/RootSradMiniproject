@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const fast2sms = require('fast-two-sms');  
 const OTP = require('../model/otpmodel');  
 const { isValidObjectId } = require('mongoose');
+const { name } = require('ejs');
     
   
 const API = "LpKOkcUND4ClatShjgRIH2FVPG1wbn7sx9BfZeE03QrozXA6WdbwJ2VIs6laoPdzDC14KrOtWTuRA0vm"
@@ -430,20 +431,24 @@ const loadcart = async (req, res) => {
             console.log(productsPrices,'this is teh product price');
 
             const totalQuantity = cartItems.reduce((total, item) => total + item.quantity, 0);
+            const subTotal = cartItems.reduce((total, item) => total +( item.realPrice * item.quantity) , 0);
+            console.log(subTotal+"subTotal++");
             let totalPrice = 0;
+            // let subTotal = 0;
             for (const item of cartItems) {
                 const product = cartProducts.find(prod => prod._id.toString() === item.productId.toString());
                 if (product) {
                     totalPrice += item.quantity * product.price;
+                    // subTotal += item.quantity * product.price;
                 } else {
                     console.log(`Product not found for item: ${item.productId}`);
                 }
             }
             const user = true
-            const discount = Math.abs(totalPrice - productsPrice).toFixed(2);
+            const discount = Math.abs(totalPrice - subTotal).toFixed(2);
             totalPrice = Math.abs(totalPrice).toFixed(2);
             
-            res.render('user/cart', { message: "Login Page", user, name, cartCount, cartItems, cartProducts, productsPrice,totalQuantity,discount,similarproducts,wishlist,userData, totalPrice, })
+            res.render('user/cart', { message: "Login Page", user, name, cartCount, cartItems, cartProducts, productsPrice,totalQuantity,discount,similarproducts,wishlist,userData, totalPrice,subTotal })
         } else {
             res.redirect('/login')
         }
@@ -480,8 +485,9 @@ const AddCart = async(req,res)=>
                 name:data.name,
                 productId: id,
                 quantity: 1,
-                realPrice: data.price,
+                realPrice: data.orginalprice,
                 price: data.price,
+                offer:data.price,
                 image:data.image
             }
             userData.cart.items.push(newcartitem)
@@ -556,7 +562,7 @@ console.log("i am updatecart======");
             const quantitys = user.cart.items[index].quantity;
             user.cart.items[index].quantity++;
             await user.save();
-            let valp = user.cart.items[index].realPrice;
+            let valp = user.cart.items[index].offer;
             let valq = user.cart.items[index].quantity;
             user.cart.items[index].price = valp * valq;
             await user.save();
@@ -568,7 +574,7 @@ console.log("i am updatecart======");
     
             await user.save();
     
-            let valp = user.cart.items[index].realPrice;
+            let valp = user.cart.items[index].offer;
             let valq = user.cart.items[index].quantity;
             user.cart.items[index].price = valp * valq;
             await user.save();  
@@ -725,6 +731,7 @@ const Checkout = async (req, res) => {
             const coupon = coupons.filter(coupon => !coupon.userId.includes(currentUserID));
             const cartProductIds = cartItems.map(item => item.productId.toString());
             const cartProducts = await product.find({ _id: { $in: cartProductIds } });
+
             const totalP_Prices = cartItems.reduce((total, items) => total + parseFloat(items.realPrice), 0);
             const totalP_Price = Math.round( totalP_Prices).toFixed(2);
             console.log(totalP_Price+"total");
@@ -755,6 +762,113 @@ const Checkout = async (req, res) => {
         res.redirect('/login')
     }
 }
+const getAddress = async(req,res)=>
+{
+ try{
+    const userEmail = req.session.userData;
+        if (req.session.userData) 
+        {
+            const userDetails = await userModel.findOne({ email: userEmail });
+            const name =  userDetails.name
+            const user = true
+            res.redirect('/address',name,user)  
+        }
+        else
+        {
+            res.redirect('/login')  
+        }
+ }
+ catch (error) {
+    console.log(error);
+}
+}
+
+const addressAdding = async (req, res) => {
+
+    console.log('hey i am address adding function ');
+    const userEmail = req.session.userData;
+        
+    try {
+        const { fullname, houseName, country, city, state, mobile, pin,email } = req.body;
+        const userData = await userModel.findOne({ email: userEmail });
+
+        if (!userData) {
+            return console.log("User not found")
+        }
+
+        const newAddress = {
+            fullname: fullname,
+            houseName: houseName,
+            country: country,
+            city: city,
+            state: state,
+            mobile: mobile,
+            pin: pin,
+            email:email
+        };
+
+        userData.address.push(newAddress);
+        await userData.save();
+        res.redirect('/profile');
+    } 
+    catch (error) {
+        console.log(error);
+    }
+}
+
+  const toAddAddressCheckout = async(req,res)=>
+  {
+    const userEmail = req.session.userData;
+    try
+    {
+        const { fullname, houseName, country, city, state, mobile, pin,email } = req.body;
+        const userData = await userModel.findOne({ email: userEmail });
+        if (!userData) {
+            return console.log("User not found")
+        }
+        const newAddress = {
+            fullname: fullname,
+            houseName: houseName,
+            country: country,
+            city: city,
+            state: state,
+            mobile: mobile,
+            pin: pin,
+            email:email
+        };
+
+        userData.address.push(newAddress);
+        await userData.save();
+        res.redirect('/CheckOutPage');
+    }
+    catch (error) {
+        console.error(error.message);
+  }
+}
+const geteditAddress = async(req,res)=>
+{
+    try
+    {
+        const userEmail = req.session.userData;
+        const addressId = req.query.id
+        if(req.session.userData)
+        {
+            const userData = await userModel.findOne({ email: userEmail });
+            let cart = userData.cart.items;
+            let cartCount = cart.length;
+            const wishlist = userData.wishlist.length
+            const userAddress = userData.address; 
+            const name = userData.name
+            const selectedAddress = userAddress.find((data) => data._id.toString() === addressId);
+            const user = true
+            res.render('user/editAddress',{ userAddress, cartCount,name,wishlist,user, selectedAddress})
+        }
+    }
+    catch(error)
+    {
+        console.log(error)
+    }
+}
 
 module.exports = { 
     home, 
@@ -779,7 +893,14 @@ module.exports = {
     updateCart,
     addingWhishListtoCart,
     WhishProductDelete,
-    Checkout
+    Checkout,
+    addressAdding,
+    getAddress,
+    toAddAddressCheckout,
+    geteditAddress
+    
+    
+
     
 }
 

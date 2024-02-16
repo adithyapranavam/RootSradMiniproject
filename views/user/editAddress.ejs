@@ -1,0 +1,80 @@
+
+<%- include('../partials/userheader.ejs')%>
+<%- include('../layouts.ejs')%>
+
+<div class="page-content ">
+    <div class="checkout p-5">
+        <div class="container border border-5  rounded">
+            
+            <form action=" " method=" ">
+                <div class="row p-5 d-flex justify-content-center ">
+                    <div class="col-lg-9">
+                        <h2 class="checkout-title text-center">Billing Details</h2>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label>Full Name *</label>
+                                    <input type="text" class="form-control" name="fullname" id="fullname"value="<%=selectedAddress.fullname%>">
+                                </div>
+                            </div>
+
+                            <label>Country *</label>
+                            <input type="text" class="form-control" name="country" id="country"value="<%=selectedAddress.country%>">
+                            
+
+                            <label>Street address *</label>
+                            <input type="text" class="form-control" placeholder="House number and Street name" name="housename" id="housename"value="<%=selectedAddress.houseName%>">
+                           
+                     
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label>Town / City *</label>
+                                    <input type="text" class="form-control" name="city" id="city"value="<%=selectedAddress.city%>">
+                                    
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <label>State / Country *</label>
+                                    <input type="text" class="form-control" name="state" id="state"value="<%=selectedAddress.state%>">
+                                    
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label>Postcode / ZIP *</label>
+                                    <input type="text" class="form-control" name="pin" id="pin"value="<%=selectedAddress.pin%>">
+                                   
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <label>Phone *</label>
+                                    <input type="tel" class="form-control" name="mobile" id="mobile"value="<%=selectedAddress.mobile%>">
+                                    
+                                </div>
+                            </div>
+
+                            <label>Email address *</label>
+                            <input type="email" class="form-control" name="email" id="email"value="<%=selectedAddress.email%>">
+                            
+
+                            <button type="submit" class="btn btn-outline-primary-2 btn-order btn-block">
+                                <span class="btn-text">Add</span>
+                                <span class="btn-hover-text">Add</span>
+                            </button>
+
+                            <input type="hidden" value="" name="addressId" >
+                            <input
+                            class="form-check-input"
+                            required
+                            type="hidden"
+                            name="addressId"
+                            value=" "
+                           />  
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/userfooter.ejs') %>

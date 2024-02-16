@@ -3,6 +3,7 @@ const Router = express.Router(); // Use express.Router() to create a router
 
 //ROUTERS
 const userController = require("../controllers/userControllers");
+const profileController = require("../controllers/profileControllers");
 
 Router.get("/", userController.home);
 Router.get("/home", userController.home);
@@ -38,10 +39,11 @@ Router.get('/wishlist/:id',userController.WhishProductDelete)
 
 //CHECKOUT
 Router.get('/CheckOutPage',userController.Checkout)
-
-
-
-
+Router.get('/address',userController.getAddress)
+Router.post('/AddressUpdate',userController.addressAdding)
+Router.get('/profile',profileController.profile)
+Router.post('/addaddresscheckout',userController.toAddAddressCheckout)
+Router.get('/editAddress',userController.geteditAddress)
 // success
 Router.get('/success', userController.successTick);
 

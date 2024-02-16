@@ -1,0 +1,75 @@
+
+<%- include('../partials/userheader.ejs')%>
+<%- include('../layouts.ejs')%>
+
+<div class="page-content ">
+    <div class="checkout">
+        <div class="containerd-flex justify-content-center ml-5">
+            
+            <form action="/address" method="post" onsubmit="return validateForm()">
+                <div class="row">
+                    <div class="col-lg-9">
+                        <h2 class="checkout-title">Billing Details</h2>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label>Full Name *</label>
+                                    <input type="text" class="form-control" name="fullname" id="fullname">
+                                    <span class="error-message text-danger" id="fullname-error"></span>
+                                </div>
+                            </div>
+
+                            <label>Country *</label>
+                            <input type="text" class="form-control" name="country" id="country">
+                            <span class ="error-message text-danger" id="country-error"></span>
+
+                            <label>Street address *</label>
+                            <input type="text" class="form-control" placeholder="House number and Street name" name="housename" id="housename">
+                            <span class="error-message text-danger" id="housename-error"></span>
+                     
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label>Town / City *</label>
+                                    <input type="text" class="form-control" name="city" id="city">
+                                    <span class="error-message text-danger" id="city-error"></span>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <label>State / Country *</label>
+                                    <input type="text" class="form-control" name="state" id="state">
+                                    <span class="error-message text-danger" id="state-error"></span>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label>Postcode / ZIP *</label>
+                                    <input type="text" class="form-control" name="pin" id="pin">
+                                    <span class="error-message text-danger" id="pin-error"></span>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <label>Phone *</label>
+                                    <input type="tel" class="form-control" name="mobile" id="mobile">
+                                    <span class="error-message text-danger" id="mobile-error"></span>
+                                </div>
+                            </div>
+
+                            <label>Email address *</label>
+                            <input type="email" class="form-control" name="email" id="email">
+                            <span class="error-message text-danger" id="email-error"></span>
+
+                            <button type="submit" class="btn btn-outline-primary-2 btn-order btn-block">
+                                <span class="btn-text">Add</span>
+                                <span class="btn-hover-text">Add</span>
+                            </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script src="./js/validation.js"></script>
+
+<%- include('../partials/userfooter.ejs') %>

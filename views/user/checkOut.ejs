@@ -1,8 +1,8 @@
 
 <%- include('../partials/userheader.ejs')%>
-
+<%- include('../layouts.ejs')%>
 <main class="main">
-    <%- include('../layouts.ejs')%>
+   
     <div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.jpg')">
         <div class="container">
             <h1 class="page-title">Checkout<span>Shop</span></h1>
@@ -11,69 +11,60 @@
     <nav aria-label="breadcrumb" class="breadcrumb-nav">
         <div class="container">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
                 <li class="breadcrumb-item"><a href="#">Shop</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Checkout</li>
             </ol>
         </div>
     </nav>
 
-<div class="page-content mb-4">
+<div class="page-content ">
     <div class="checkout">
         <div class="container">
-                <form action="#">
-                    <div class="row">
-                        <div class="col-lg-9">
-                            <h2 class="checkout-title">Billing Details</h2>
-                                <div class="row" >
-                                    <div class="col-sm-6">
-                                        <label>Full Name *</label>
-                                        <input type="text" class="form-control" required>
-                                    </div>
+            <div class="row">
+                <div class="col-lg-9">
+                    <div class="page-content mb-4" id="address-reload">
+                        <div class="checkout">
+                            <div class="container">
+                                <h3 class="card-title p-3">Billing Address</h3>
+                                <% if(address.length==0){%>
+                                <div class="ml-3 mb-3">
+                                    <a class="btn btn-outline-primary" data-toggle="modal"
+                                        data-target="#exampleModal">Add<i class="icon-edit  "></i></a>
                                 </div>
+                                <% }else{%>
+                                    <div class="row">
+                            
+                                        <div class="col-lg-9 " id="address-reload">
+                                            <% address.forEach((data,index)=>{%>
+                                            <div class="col-lg-9 ">
+                                                <div class="card card-dashboard  border border-3 rounded">
+                                                    <div class="card-body">
+                                                        <input type="radio" name="selectedAddress" id="selectedAddress"
+                                                        value="<%=data._id%>" required>
+                                                         <p>
+                                                            <%=data.fullname%><br>
+                                                            <%=data.houseName%><br>
+                                                            <%=data.country%><br>
+                                                            <%=data.city%><br>
+                                                            <%=data.state%><br>
+                                                            <%=data.mobile%><br>
+                                                            <%=data.pin%><br>
+                                                            <%=data.email%><br>
+                                                            <a  href="/editAddress?id=<%=data._id%>">Edit Address<i class="icon-edit"></i></a>
+                                                        </p> 
+                                                    </div>
+                                                </div>
+                                            </div> 
 
-                                <label>Country *</label>
-                                <input type="text" class="form-control" required>
-
-                                <label>Street address *</label>
-                                <input type="text" class="form-control" placeholder="House number and Street name" required>
-                                
-
-                                <div class="row">
-                                    <div class="col-sm-6">
-                                        <label>Town *</label>
-                                        <input type="text" class="form-control" required>
+                                        </div> 
+                                        <% }); %>
                                     </div>
-
-                                    <div class="col-sm-6">
-                                        <label>State *</label>
-                                        <input type="text" class="form-control" required>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-sm-6">
-                                        <label>Postcode *</label>
-                                        <input type="text" class="form-control" required>
-                                    </div>
-
-                                    <div class="col-sm-6">
-                                        <label>Phone *</label>
-                                        <input type="tel" class="form-control" required>
-                                    </div>
-                                </div>
-
-                                <label>Email address *</label>
-                                <input type="email" class="form-control" required>
-
-                                <div class="row f-flex align-items-end">
-                                  <div class="p-2 col-lg-6 billing_button">
-                                    <button class="btn btn-danger p-2" type="submit">
-                                        Add New Address
-                                    </button>
-                                  </div> 
-                                </div> 
+                                    <% }%>
+                            </div>
                         </div>
+                    </div>
+                </div>
                         <aside class="col-lg-3">
                             <div class="summary">
                                 <h3 class="summary-title">Your Order</h3>
@@ -95,7 +86,7 @@
                                         <%}) %>
                                         <tr class="summary-subtotal">
                                             <td>Subtotal:</td>
-                                            <td>₹<%=totalP_Price %></td>
+                                            <td>₹<%=totalPrice %></td>
                                         </tr>
                                         <tr>
                                             <td>Shipping:</td>
@@ -107,7 +98,42 @@
                                         </tr>
                                     </tbody>
                                 </table>
-                            
+                            <!-- <div class=" p-2 px-3 my-3 border billinf_form_Wrapper">
+                                    <div class=" billing_form">
+                                        <% address.forEach((data,index)=>{%>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <input type="radio" name="selectedAddress" id="selectedAddress"
+                                                    value="<%=data._id%>" required>
+                                                <h6>Select Address</h6>
+                                            </div>
+                                            <div class="address p-2 px-3">
+                                                <span style="color: #9a9a9a; font-size: 13.5px;">
+                                                    <Span>
+                                                        <%=data.name%>,
+                                                    </Span>
+                                                    <Span>
+                                                        <%=data.houseName%>,
+                                                    </Span>
+                                                    <Span>
+                                                        <%=data.street%>,
+                                                    </Span>
+                                                    <Span>
+                                                        <%=data.city%>,
+                                                    </Span>
+                                                    <Span>
+                                                        <%=data.state%>,
+                                                    </Span>
+                                                    <br>
+                                                    <Span>Ph :<%=data.phone%>,</Span>
+                                                    <Span>Pin :<%=data.postalCode%></Span>
+                                                </span>
+                                            </div>
+                                            <div class="mt-2">
+                                                <hr class="bg-dark p-0 ">
+                                            </div>
+                                            <%})%>
+                                    </div>
+                                </div> -->
                                 <div class="accordion-summary" id="accordion-payment">
                                        
                                             <div class="card-header" id="heading-3">
@@ -136,11 +162,92 @@
                                         </div>
                                       </form>
                                     </div>
+                                    <span class="px-2 p-1 col-lg-12 col-12" style="font-size: 14px; color: #9a9a9a;">
+                                        Available Coupons?
+                                        <a href="#" id="openModalBtn" class="text-decoration-none text-danger">
+                                            Click Here
+                                        </a>
+                                    </span>
                         </aside>
                     </div>
-                </form>
             </div>
         </div>
     </div>
 </main>
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Billing address</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeBtn">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="/addaddresscheckout" method="post">
+                <div class="row p-5">
+                    <div class="col-lg-9">
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label>Full Name *</label>
+                                <input type="text" class="form-control" name="fullname" id="fullname">
+                                <span class="error-message text-danger" id="fullname-error"></span>
+                            </div>
+                        </div>
+
+                        <label>Country *</label>
+                        <input type="text" class="form-control" name="country" id="country">
+                        <span class="error-message text-danger" id="country-error"></span>
+
+                        <label>Street address *</label>
+                        <input type="text" class="form-control" placeholder=""
+                            name="houseName" id="houseName">
+                        <span class="error-message text-danger" id="housename-error"></span>
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label>Town *</label>
+                                <input type="text" class="form-control" name="city" id="city">
+                                <span class="error-message text-danger" id="city-error"></span>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <label>State *</label>
+                                <input type="text" class="form-control" name="state" id="state">
+                                <span class="error-message text-danger" id="state-error"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label>Postcode *</label>
+                                <input type="text" class="form-control" name="pin" id="pin">
+                                <span class="error-message text-danger" id="pin-error"></span>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <label>Phone *</label>
+                                <input type="tel" class="form-control" name="mobile" id="mobile">
+                                <span class="error-message text-danger" id="mobile-error"></span>
+                            </div>
+                        </div>
+
+                        <label>Email address *</label>
+                        <input type="email" class="form-control" name="email" id="email">
+                        <span class="error-message text-danger" id="email-error"></span>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button class="btn btn-secondary" onclick="addAddress()">Add</button>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="./js/validation.js"></script>
 <%- include('../partials/userfooter.ejs') %>
