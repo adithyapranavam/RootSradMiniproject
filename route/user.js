@@ -39,11 +39,15 @@ Router.get('/wishlist/:id',userController.WhishProductDelete)
 
 //CHECKOUT
 Router.get('/CheckOutPage',userController.Checkout)
-Router.get('/address',userController.getAddress)
 Router.post('/AddressUpdate',userController.addressAdding)
+Router.get('/address',userController.getAddress)
+
+
 Router.get('/profile',profileController.profile)
 Router.post('/addaddresscheckout',userController.toAddAddressCheckout)
 Router.get('/editAddress',userController.geteditAddress)
+Router.post('/updateAddress',userController.updateaddress)
+
 // success
 Router.get('/success', userController.successTick);
 

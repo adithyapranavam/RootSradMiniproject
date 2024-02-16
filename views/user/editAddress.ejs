@@ -6,7 +6,7 @@
     <div class="checkout p-5">
         <div class="container border border-5  rounded">
             
-            <form action=" " method=" ">
+            <form action="/updateAddress" method="post">
                 <div class="row p-5 d-flex justify-content-center ">
                     <div class="col-lg-9">
                         <h2 class="checkout-title text-center">Billing Details</h2>
@@ -14,15 +14,16 @@
                                 <div class="col-sm-6">
                                     <label>Full Name *</label>
                                     <input type="text" class="form-control" name="fullname" id="fullname"value="<%=selectedAddress.fullname%>">
+                                    <input type="hidden" name="AddressId" value="<%=selectedAddress._id%>" >
                                 </div>
                             </div>
 
                             <label>Country *</label>
                             <input type="text" class="form-control" name="country" id="country"value="<%=selectedAddress.country%>">
-                            
+                         
 
                             <label>Street address *</label>
-                            <input type="text" class="form-control" placeholder="House number and Street name" name="housename" id="housename"value="<%=selectedAddress.houseName%>">
+                            <input type="text" class="form-control" placeholder="House number and Street name" name="houseName" id="houseName"value="<%=selectedAddress.houseName%>">
                            
                      
                             <div class="row">
@@ -60,16 +61,7 @@
                             <button type="submit" class="btn btn-outline-primary-2 btn-order btn-block">
                                 <span class="btn-text">Add</span>
                                 <span class="btn-hover-text">Add</span>
-                            </button>
-
-                            <input type="hidden" value="" name="addressId" >
-                            <input
-                            class="form-check-input"
-                            required
-                            type="hidden"
-                            name="addressId"
-                            value=" "
-                           />  
+                            </button> 
                     </div>
                 </div>
             </form>

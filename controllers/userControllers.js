@@ -818,9 +818,10 @@ const addressAdding = async (req, res) => {
 
   const toAddAddressCheckout = async(req,res)=>
   {
-    const userEmail = req.session.userData;
+ 
     try
     {
+        const userEmail = req.session.userData;
         const { fullname, houseName, country, city, state, mobile, pin,email } = req.body;
         const userData = await userModel.findOne({ email: userEmail });
         if (!userData) {
@@ -869,6 +870,45 @@ const geteditAddress = async(req,res)=>
         console.log(error)
     }
 }
+const updateaddress = async (req, res) => {
+
+    const userEmail = req.session.userData;
+    try {
+        const { fullname, houseName, country, city, state, mobile, pin, email,AddressId } = req.body;
+        const userData = await userModel.findOne({ email: userEmail });
+        const exisitingAddress = userData.address.find((data) => data._id.toString() === req.body.AddressId);
+     
+        if (exisitingAddress) {
+           
+            exisitingAddress.fullname = fullname;
+            exisitingAddress.houseName = houseName;
+            exisitingAddress.country = country;
+            exisitingAddress.city = city;
+            exisitingAddress.state = state;
+            exisitingAddress.mobile = mobile;
+            exisitingAddress.pin = pin;
+            exisitingAddress.email = email;
+        } else {
+            const newAddress = {
+                fullname: fullname,
+                houseName: houseName,
+                country: country,
+                city: city,
+                state: state,
+                mobile: mobile,
+                pin: pin,
+                email:email
+            };
+            userModel.address.push(newAddress);
+    
+        }
+        await userData.save();
+        res.redirect('/profile');
+    } catch (error) {
+        console.log(error);
+    }
+};
+
 
 module.exports = { 
     home, 
@@ -897,10 +937,7 @@ module.exports = {
     addressAdding,
     getAddress,
     toAddAddressCheckout,
-    geteditAddress
-    
-    
-
-    
+    geteditAddress,
+    updateaddress   
 }
 

@@ -30,12 +30,10 @@ const profile = async(req,res)=>
         const FoundUser = req.session.userData;
         if(req.session.userData)
         {
-            console.log('i am profile')
             const userData = await userModel.findOne({ email: userEmail });
             let cart = userData.cart.items;
             let cartCount = cart.length;
             const wishlist = userData.wishlist.length
-            console.log('this is the wishlist count ', wishlist)
             const name = userData.name;
             const user = true
             const userDatas = await userModel.findOne({ email: FoundUser });
@@ -47,13 +45,11 @@ const profile = async(req,res)=>
             console.log(error)
         }
     }
-
     
-
     module.exports = {
 
-        profile,
-      
+        profile
+       
        
 
     }      
