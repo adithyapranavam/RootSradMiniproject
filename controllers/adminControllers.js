@@ -3,6 +3,7 @@ const session = require("express-session");
 const userModel = require('../model/usermodel');
 const categoryCollection = require("../model/categorymodel");
 const productCollection = require('../model/productmodel');
+const couponModel = require('../model/coupon');
 const fs = require('fs')
 
 //ADMIN LOGIN
@@ -444,6 +445,97 @@ const productSearch = async(req,res)=>
     }
 }
 
+
+// coupon
+
+
+
+const couponsList = async (req, res) => {
+    try 
+    {
+     
+        const couponData = await couponModel.find();
+        res.render('admin/coupon', {  couponData })
+    
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).send("couponRendering Error");
+    }
+}
+const couponsAdding = async (req, res) => {
+    try {
+        const couponData = await couponModel.find({ isList: true });
+        res.render('admin/couponAdding', { title: "coupon",couponData});
+    } catch (error) {
+        console.log("couponAddingPage Rendering Error");
+        res.status(500).send("couponAddingPage Rendering Error");
+    }
+}
+const couponCreation = async(req,res)=>
+{
+    try{
+        const data = req.body;
+        const couponDetails = new couponModel({
+            couponName: data.couponName,
+            couponValue: data.couponValue,
+            expiryDate: data.expiryDate,
+            maxValue: data.maxValue,
+            minValue: data.minValue
+        })
+        await couponDetails.save();
+        res.redirect('/admin/coupon');
+    }
+    catch (error) {
+        res.status(500);
+    }
+}
+const editCoupon = async(req,res)=>
+{
+    try{
+        const id = req.query.id
+        const couponData = await couponModel.find({_id:id });
+        res.render('admin/editCoupon',{couponData})
+    }
+    catch (error) {
+        res.status(500);
+    }
+}
+
+const postEditCoupon = async(req,res)=>
+{
+  
+    try
+    {
+    const couponData = await couponModel.findOneAndUpdate({_id:req.body.id},{
+        
+        couponName: req.body.couponName,
+        couponValue: req.body.couponValue,
+        expiryDate: req.body.expiryDate,
+        minValue: req.body.minValue,
+        maxValue:   req.body.maxValue,
+        
+    })
+    res.redirect('/admin/coupon')
+}catch (error) {
+    console.log(error);
+ }
+
+}
+const getCouponDelete= async(req,res)=>
+{
+    try{
+
+    const id = req.query.id
+    await  couponModel.deleteOne({_id:id})
+
+    res.redirect('/admin/coupon')
+    }
+    catch(error)
+    {
+
+    }
+}
 module.exports = 
 {
     adminlogin,
@@ -468,5 +560,11 @@ module.exports =
     productList,
     productSearch,
     userSearch ,
-    adminLogout
+    adminLogout,
+    couponsList,
+    couponsAdding,
+    couponCreation,
+    editCoupon,
+    postEditCoupon,
+    getCouponDelete
 } 

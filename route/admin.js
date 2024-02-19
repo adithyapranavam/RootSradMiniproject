@@ -39,6 +39,12 @@ admin.post('/productUnlist/:id',adminController.productUnlist)
 admin.post('/productList/:id',adminController.productList)
 admin.post('/product-Search',adminController.productSearch ) 
 
+// coupon Route
 
-
+admin.get('/coupon',adminController.couponsList);
+admin.get('/coupons/couponsAdding',adminController.couponsAdding)
+admin.post('/coupons/couponsAdding',adminController.couponCreation)
+admin.get('/editCoupon',adminController. editCoupon )
+admin.post('/editCoupon',adminController.postEditCoupon)
+admin.get('/deleteCoupon',adminController.getCouponDelete)
 module.exports = admin;

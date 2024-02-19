@@ -31,7 +31,7 @@ Router.post('/cart/quantityUpdate/:itemId', userController.cartQuantityUpdate);
 Router.put('/cart/update',userController.updateCart)
 Router.get('/cartDelete/:id',userController.cartDelete)
 
-//ADD TO wishlist
+// wishlist PART
 Router.get('/wishlist',userController.WishListLoad) 
 Router.post('/wishlist/:id',userController.addingWishList)
 Router.put('/wishlist/cart',userController.addingWhishListtoCart)
@@ -47,7 +47,7 @@ Router.get('/profile',profileController.profile)
 Router.post('/addaddresscheckout',userController.toAddAddressCheckout)
 Router.get('/editAddress',userController.geteditAddress)
 Router.post('/updateAddress',userController.updateaddress)
-
+Router.get('/deleteAddress',userController.remove)
 // success
 Router.get('/success', userController.successTick);
 

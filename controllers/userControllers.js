@@ -545,7 +545,7 @@ const cartQuantityUpdate = async (req, res) => {
 
 const updateCart = async(req,res)=>
 {
-console.log("i am updatecart======");
+
         const idvalue = req.body.idvalule;
         const sessvalue = req.body.sessvalues;
         const changenum = req.body.change;
@@ -579,19 +579,6 @@ console.log("i am updatecart======");
             user.cart.items[index].price = valp * valq;
             await user.save();  
         }
-    
-    //     await userModel.findById({ _id: sessvalue })
-    
-    //         .then((data) => {
-    //             if (!data) {
-    //                 res.status(404).send({ message: "Not found user with id" });
-    //             } else {
-    //                 res.json(100);
-    //             }
-    //         })
-    //         .catch((err) => {
-    //             res.status(500).send({ message: "Error retriving user with id" });
-    // });
 res.json(100);
 }  
 
@@ -617,7 +604,6 @@ const cartDelete = async (req,res) =>
 //WISHLIST
 const WishListLoad = async (req, res) => {
     try {
-        console.log("wishlistload");
         const userEmail = req.session.userData;
         if (req.session.userData) 
         {
@@ -717,7 +703,7 @@ const Checkout = async (req, res) => {
     const userEmail = req.session.userData;
     if(req.session.userData){
         try {
-            console.log("i am checkout")
+     
             const userDetails = await userModel.findOne({ email: userEmail });
             console.log(userDetails);
             
@@ -734,12 +720,10 @@ const Checkout = async (req, res) => {
 
             const totalP_Prices = cartItems.reduce((total, items) => total + parseFloat(items.realPrice), 0);
             const totalP_Price = Math.round( totalP_Prices).toFixed(2);
-            console.log(totalP_Price+"total");
             const address = userDetails.address;
             let totalPrice = 0;
             totalPrice = cartItems.reduce((total,item) => total + item.price,0);
             const discount = Math.abs(totalP_Price - totalPrice)
-            console.log(totalPrice+"dis");
             const user = true;
             res.render('user/checkOut', {
                 title: "Check Out",
@@ -785,7 +769,7 @@ const getAddress = async(req,res)=>
 
 const addressAdding = async (req, res) => {
 
-    console.log('hey i am address adding function ');
+
     const userEmail = req.session.userData;
         
     try {
@@ -907,8 +891,21 @@ const updateaddress = async (req, res) => {
     } catch (error) {
         console.log(error);
     }
-};
+}
 
+const remove = async(req,res)=>
+{
+    const addressId = req.query.id;
+    const userEmail = req.session.userData;
+        try {
+            let userData = await userModel.findOne({email:userEmail})
+            let addsDelete = await userModel.updateOne({email:userEmail},{$pull:{address:{_id:addressId}}})
+            res.redirect('/profile'); 
+        } catch (err) {
+           
+            res.status(500).send('Internal Server Error');
+        } 
+}
 
 module.exports = { 
     home, 
@@ -938,6 +935,7 @@ module.exports = {
     getAddress,
     toAddAddressCheckout,
     geteditAddress,
-    updateaddress   
+    updateaddress,
+    remove   
 }
 
