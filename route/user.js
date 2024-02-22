@@ -7,6 +7,7 @@ const profileController = require("../controllers/profileControllers");
 
 Router.get("/", userController.home);
 Router.get("/home", userController.home);
+Router.get('/shop',userController.shop)
 
 //USER LOGIN
 Router.get("/login", userController.login);

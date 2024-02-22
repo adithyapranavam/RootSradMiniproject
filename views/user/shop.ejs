@@ -1,0 +1,98 @@
+<%- include('../partials/userheader.ejs')%>
+<%- include('../layouts.ejs')%>
+
+
+<main class="main">
+    <div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.jpg')">
+        <div class="container-fluid">
+            <h1 class="page-title"><span>Shop</span></h1>
+        </div>
+    </div>
+    <nav aria-label="breadcrumb" class="breadcrumb-nav">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item"><a href="#">Shop</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Shopping Cart</li>
+            </ol>
+        </div>
+    </nav>
+
+    <div class="page-content">
+               <div class="container-fluid">
+                <div class="toolbox">
+                    <div class="toolbox-left">
+                        <a  class="sidebar-toggler"><i class="icon-bars"></i>Filters</a>
+                    </div>
+
+                    <div class="toolbox-center">
+                        <div class="toolbox-info">
+                            
+                        </div>
+                    </div>
+
+                    <div class="toolbox-right">
+                        <div class="toolbox-sort">
+
+                            <div class="dropdown">
+                                <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                    id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false">
+                                    Sort by
+                                </button>
+                                <div class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item h6" href="/shop?id=1">Low-High</a>
+                                    <a class="dropdown-item h6" href="/shop?id=-1">Hight-Low</a>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <%if(products.length===0){%>
+                    <h1 class="text-center">No items Found</h1>
+                                     <% }else{%>
+                <div class="products-container" data-layout="fitRows">
+                    <% products.forEach((data,index)=>{%> 
+                     <div class="product-item furniture col-6 col-md-3 col-lg-3">
+                         <div class="product product-4">
+                             <figure class="product-media">
+                                 <a href="/productView/<%= data._id%>">
+                                     <img src="/productImages/<%= data.image[0]%>" alt="Product image" class="product-image" style="height: 260px;">
+                                 </a>
+                                 
+                                 <div class="product-action">
+                                    <a href="/productView/<%= data._id%>" class="btn-product btn-cart"><span>add to cart</span></a>
+                                </div>
+                             </figure>
+     
+                             <div class="product-body">
+                                 <h3 class="product-title"><a href="product.html"><%=data.name %></a></h3>
+     
+                                 <div class="product-price">
+                                     <span class="new-price">₹ <%= data.price %></span>
+                                     <span class="old-price" style="text-decoration: line-through;">₹ <%= data.orginalprice %></span>
+                                 </div>
+                                
+                                 <div class="rating d-flex align-items-center">
+                                     <div class="star d-flex align-items-center text-warning">
+                                         <i class='bx bxs-star'></i>
+                                         <i class='bx bxs-star'></i>
+                                         <i class='bx bxs-star'></i>
+                                         <i class='bx bxs-star'></i>
+                                         <i class='bx bx-star'></i>
+                                     </div>
+                                     <div class="value ms-2">(10)</div>
+                                 </div>
+                             </div>
+                         </div>  
+                     </div>
+                     <%})%>
+                  </div>
+                  <% }%>
+            </div>
+      </div>
+</main>
+
+
+<%- include('../partials/userfooter.ejs') %>

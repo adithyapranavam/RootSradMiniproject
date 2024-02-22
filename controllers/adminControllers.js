@@ -4,7 +4,10 @@ const userModel = require('../model/usermodel');
 const categoryCollection = require("../model/categorymodel");
 const productCollection = require('../model/productmodel');
 const couponModel = require('../model/coupon');
+const bannerModel = require('../model/banner');
 const fs = require('fs')
+//MULTER
+const multer = require('../middleware/multer');
 
 //ADMIN LOGIN
 
@@ -269,182 +272,199 @@ const userDetails = async(req,res)=>
     
     }
 
-    //Product Block
-    const productView = async(req,res)=>
-    {
-        try{
-              const product = await productCollection.find();
-              res.render('admin/viewproducts',{product})
-        }
-        catch(error)
-        {
-            console.log(error)
-            res.status(500).send("interval error")
-        }
+
+
+//Product Block
+const productView = async(req,res)=>
+{
+    try{
+          const product = await productCollection.find();
+          console.log(product);
+          res.render('admin/viewproducts',{product})
     }
-    const productAdding = async (req, res) => {
-        try {
-            const cateData = await categoryCollection.find({ isavilable: true });
-            console.log(cateData);
-            res.render('admin/productCreate', { title: "Product",cateData })
-        } catch (error) {
-            console.log(error);
-            res.status(500).send("internal error")
-        }
-    }  
-
-    const productAddingPost = async(req,res,next)=>
-    {  
-        try{
-               const files = req.files
-               const orginalprice = parseInt(req.body.orginalprice);
-            //    console.log(req.body.orginalprice);
-               const productOffer = parseInt(req.body.offers);
-               const updatingPrice = orginalprice-((orginalprice*productOffer)/100);
-                // console.log(updatingPrice)
-               const product = {
-                name: req.body.name,
-                price: updatingPrice,
-                orginalprice:req.body.orginalprice,
-                productOffer:req.body.offers,
-                quantity:req.body.quantity,
-                discription: req.body.discription.trim(),
-                category:req.body.category.trim(), 
-                image:files.map(file => file.filename)
-            }
-            await productCollection.insertMany([product])
-            res.redirect('/admin/viewproducts')
-        } 
-        catch (error)  
-        {
-            console.log(error.message);
-        }
-             
-    }
-    const productEdit = async(req,res)=>
+    catch(error)
     {
-        try{
-            const id = req.params.id
-            const productData = await productCollection.findOne({_id:id})
-            res.render('admin/product-edit',{productData})
-        }
-        catch{
-            console.log(error.message);
-            res.status(500).send("Internal error")
-        }
+        console.log(error)
+        res.status(500).send("interval error")
     }
-    
-    const productEditPost = async(req,res)=>
-    {
-        try{
-            const id = req.body.id;
+}
+const productAdding = async (req, res) => {
+    try {
+        const cateData = await categoryCollection.find({ isavilable: true });
+        console.log(cateData);
+        res.render('admin/productCreate', { title: "Product",cateData })
+    } catch (error) {
+        console.log(error);
+        res.status(500).send("internal error")
+    }
+}  
 
-                // Retrieve existing product data
-            const existingProduct = await productCollection.findById(id);
-            // Check if the product with the specified ID exists
-            if(!existingProduct)
-            {
-                return res.status(404).send("product not found");
-            }
-            const existingImages = existingProduct.image;
- 
-        //adding the discount
-            const orginalprice = parseInt(req.body.price);
-            const productOffer = parseInt(req.body.Offer);
-            const updatingPrice = orginalprice-((orginalprice*productOffer)/100);
-
-               // Get the list of images to delete based on checkbox values
-            const imagesToDelete = req.body.imagesToDelete || [];
-
-                  // Delete images that are not selected (checkbox not ticked)
-            const imagesToKeep = existingImages.filter((image) => !imagesToDelete.includes(image));
-            existingImages.forEach((filename) => {
-                if (!imagesToKeep.includes(filename)) {
-                    fs.unlink(`productImages/${filename}`, (err) => {
-                        if (err) {
-                            console.log(err);
-                        }
-                    });
-                }
-            });
-             
-        const updatedData = {
+const productAddingPost = async(req,res,next)=>
+{  
+    try{
+           const files = req.files
+           const orginalprice = parseInt(req.body.orginalprice);
+        //    console.log(req.body.orginalprice);
+           const productOffer = parseInt(req.body.offers);
+           const updatingPrice = orginalprice-((orginalprice*productOffer)/100);
+            // console.log(updatingPrice)
+           const product = {
             name: req.body.name,
             price: updatingPrice,
-            orginalprice:req.body.price,
-            productOffer: req.body.Offer,
-            discription: req.body.discription,
-            category: req.body.category,
-            quantity: req.body.quantity,
-            image: imagesToKeep, // Set the updated image list
-        };
-
-        if (req.files && req.files.length > 0) {
-            const newImages = req.files.map((file) => file.filename);
-            updatedData.image = updatedData.image.concat(newImages); // Add new images
+            orginalprice:req.body.orginalprice,
+            productOffer:req.body.offers,
+            quantity:req.body.quantity,
+            discription: req.body.discription.trim(),
+            category:req.body.category.trim(), 
+            image:files.map(file => file.filename)
         }
-
-        await productCollection.findByIdAndUpdate(id, updatedData);
-        res.redirect('/admin/viewproducts');
+        await productCollection.insertMany([product])
+        res.redirect('/admin/viewproducts')
     } 
-    catch (error) 
+    catch (error)  
     {
-        console.log(error);
-        res.status(500).send("Internal error");
+        console.log(error.message);
     }
-        
+         
+}
+const productEdit = async(req,res)=>
+{
+    try{
+        const id = req.params.id
+        const productData = await productCollection.findOne({_id:id})
+        res.render('admin/product-edit',{productData})
+    }
+    catch{
+        console.log(error.message);
+        res.status(500).send("Internal error")
+    }
+}
+
+const productEditPost = async(req,res)=>
+{
+    try{
+        const id = req.body.id;
+
+            // Retrieve existing product data
+        const existingProduct = await productCollection.findById(id);
+        // Check if the product with the specified ID exists
+        if(!existingProduct)
+        {
+            return res.status(404).send("product not found");
+        }
+        const existingImages = existingProduct.image;
+
+    //adding the discount
+        const orginalprice = parseInt(req.body.price);
+        const productOffer = parseInt(req.body.Offer);
+        const updatingPrice = orginalprice-((orginalprice*productOffer)/100);
+
+           // Get the list of images to delete based on checkbox values
+        const imagesToDelete = req.body.imagesToDelete || [];
+
+              // Delete images that are not selected (checkbox not ticked)
+        const imagesToKeep = existingImages.filter((image) => !imagesToDelete.includes(image));
+        existingImages.forEach((filename) => {
+            if (!imagesToKeep.includes(filename)) {
+                fs.unlink(`productImages/${filename}`, (err) => {
+                    if (err) {
+                        console.log(err);
+                    }
+                });
+            }
+        });
+         
+    const updatedData = {
+        name: req.body.name,
+        price: updatingPrice,
+        orginalprice:req.body.price,
+        productOffer: req.body.Offer,
+        discription: req.body.discription,
+        category: req.body.category,
+        quantity: req.body.quantity,
+        image: imagesToKeep, // Set the updated image list
+    };
+
+    if (req.files && req.files.length > 0) {
+        const newImages = req.files.map((file) => file.filename);
+        updatedData.image = updatedData.image.concat(newImages); // Add new images
+    }
+
+    await productCollection.findByIdAndUpdate(id, updatedData);
+    res.redirect('/admin/viewproducts');
+} 
+catch (error) 
+{
+    console.log(error);
+    res.status(500).send("Internal error");
+}
+    
 }
 
 const productUnlist = async (req, res) => {
-    try {
-        const prod_Id = req.params.id
-        await productCollection.findByIdAndUpdate({ _id: prod_Id }, {
-            $set: {
-                availability: false
-            }
-        })
-        res.redirect('/admin/viewproducts')
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
+try {
+    const prod_Id = req.params.id
+    await productCollection.findByIdAndUpdate({ _id: prod_Id }, {
+        $set: {
+            availability: false
+        }
+    })
+    res.redirect('/admin/viewproducts')
+} catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
+}
 }
 const productList = async (req, res) => {
-    try {
-        const prod_Id = req.params.id
-        await productCollection.findByIdAndUpdate({ _id: prod_Id }, {
-            $set: {
-                availability: true
-            }
-        })
-        res.redirect('/admin/viewproducts')
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
+try {
+    const prod_Id = req.params.id
+    await productCollection.findByIdAndUpdate({ _id: prod_Id }, {
+        $set: {
+            availability: true
+        }
+    })
+    res.redirect('/admin/viewproducts')
+} catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
+}
 }
 const productSearch = async(req,res)=>
 {
-    try
-    {     
-        const search = req.body.search
-        const product = await productCollection.find({$and:[{name:{$regex:'^' + search,$options:'i'}}]})
-        let nodataMessage = '';
-        if(product.length === 0)
-        {
-            nodataMessage = 'No data available';
-            res.render('admin/viewproducts',{product,nodata:nodataMessage})
-        }
-        else{
-            res.render('admin/viewproducts',{product})
-        }
-    }
-    catch(err)
+try
+{     
+    const search = req.body.search
+    const product = await productCollection.find({$and:[{name:{$regex:'^' + search,$options:'i'}}]})
+    let nodataMessage = '';
+    if(product.length === 0)
     {
-         console.log(err.message);
+        nodataMessage = 'No data available';
+        res.render('admin/viewproducts',{product,nodata:nodataMessage})
+    }
+    else{
+        res.render('admin/viewproducts',{product})
     }
 }
+catch(err)
+{
+     console.log(err.message);
+}
+}
 
+const productDelete= async(req,res)=>
+{
+    try{
+
+    const id = req.query.id
+    await  productCollection.deleteOne({_id:id})
+
+    res.redirect('/admin/viewproducts')
+    }
+    catch(error)
+    {
+
+    }
+}
 
 // coupon
 
@@ -536,6 +556,58 @@ const getCouponDelete= async(req,res)=>
 
     }
 }
+const banner = async(req,res)=>
+{
+
+    try{
+
+        const bannerData = await bannerModel.find()
+  
+        res.render('admin/banner',{bannerData})
+
+    }
+    catch(error)
+    {
+        console.log(error)
+    }
+}
+const bannerAdding = async(req,res)=>
+{
+    try
+    {
+        const bannerData = await bannerModel.find({ isList: true });
+        res.render('admin/bannerAdding', { title: "banner",bannerData});
+    }
+    catch(error)
+    {
+        console.log(error)
+    } 
+}
+const bannerPost = async(req,res)=>
+{
+    const files = req.files
+    const {name} = req.body;
+    const banner = { 
+        name:name,
+        image:files.map(file => file.filename),
+        availability:true
+    }
+
+      await bannerModel.create(banner)
+      res.redirect('/admin/banner')
+}
+const removeBanner = async(req,res)=>
+{
+    try{
+         const id = req.query.id
+         await bannerModel.deleteOne({_id:id})
+         res.redirect('/admin/banner')
+    }
+    catch(error)
+    {
+        console.log(error);
+    }
+}
 module.exports = 
 {
     adminlogin,
@@ -558,6 +630,7 @@ module.exports =
     productEditPost,
     productUnlist,
     productList,
+    productDelete,
     productSearch,
     userSearch ,
     adminLogout,
@@ -566,5 +639,9 @@ module.exports =
     couponCreation,
     editCoupon,
     postEditCoupon,
-    getCouponDelete
+    getCouponDelete,
+    banner,
+    bannerAdding,
+    bannerPost,
+    removeBanner
 } 

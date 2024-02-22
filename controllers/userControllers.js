@@ -1,6 +1,8 @@
 const userModel = require('../model/usermodel')
 const product = require('../model/productmodel')
 const couponModle = require('../model/coupon');
+const categoryCollection = require("../model/categorymodel");
+const bannerModel = require('../model/banner');
 const bcrypt = require('bcrypt');
 const fast2sms = require('fast-two-sms');  
 const OTP = require('../model/otpmodel');  
@@ -29,7 +31,7 @@ const home = async(req,res)=>
 {
     try{
         const products = await product.find({availability:true}).limit(4)
-
+        let bannerData= await bannerModel.find()
         if(req.session.userData){
             const userData = await userModel.findOne({email:req.session.userData})
             console.log(userData,'this is the userdata form sessions');
@@ -39,12 +41,13 @@ const home = async(req,res)=>
             const cartCount = cart.length;
             const wishcount = userData.wishlist.length
             const wishlist = userData.wishlist.length
+
             console.log(wishlist)
-            res.render('user/home',{user,products,name,cartCount,wishlist,wishcount})
+            res.render('user/home',{user,products,name,cartCount,wishlist,wishcount,bannerData})
         }else{
             const name = ''
             const user = false
-            res.render('user/home',{user,products,name})
+            res.render('user/home',{user,products,name,bannerData})
         }
 
     }
@@ -213,26 +216,33 @@ const numberValidation = async(req,res)=>
         res.status(500).render("user/forgotPassword", {  msg })
     }
 }
-// const newPassword = async (req, res) => {
-//     try {
-//         const psw = req.body.password;
-//         const userNumber = req.session.userNumber;
-//         // const newPassword = await pwdEncription(psw);
-//         await user.findOneAndUpdate({ number: userNumber }, {
-//             $set: {
-//                 password: newPassword
-//             }
-//         });
-//         req.session.userNumber = null;
-//         const succ = "Successfully Changed Your Password"
-//         res.redirect('/home')
-//     } 
-//     catch (error) 
-//     {
-//         console.log(error);
-//     }
-// }
 
+
+const shop = async(req,res)=>
+{
+         try{
+            
+            let cart,cartCount,wishlist;
+            if(req.session.userData)
+            {
+                const userData = await userModel.findOne({email:req.session.userData})
+                const name = userData.name;
+                cart = userData.cart.items;
+                cartCount = cart.length;
+                const wishlist = userData.wishlist.length
+                const data = await categoryCollection.find()
+                const products = await product.find();
+                const user = true;
+                res.render('user/shop',{ wishlist,name,cartCount,user,products,data })
+            }
+        
+        }
+        catch (error) {
+            console.log("detaild page error" + error)
+          
+        }
+
+    }
 const productView = async(req,res)=>
 
 {
@@ -936,6 +946,7 @@ module.exports = {
     toAddAddressCheckout,
     geteditAddress,
     updateaddress,
-    remove   
+    remove,
+    shop  
 }
 

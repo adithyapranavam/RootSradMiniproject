@@ -8,7 +8,7 @@ const bodyparser = require("body-parser");
 const { v4: uuidv4 } = require("uuid");
 
 
-
+// ROUTER IMPORTING
 const userRouter = require('./route/user');
 const adminRouter = require('./route/admin');
 
@@ -37,10 +37,11 @@ const PORT = process.env.PORT || 1996;
 // EJS SETTING
 app.set("view engine", "ejs");
 app.use('/views',express.static(path.join(__dirname,'./views')));
+
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use(bodyparser.urlencoded({ extended: true }));
 
+app.use(bodyparser.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
     res.setHeader('Cache-Control', 'no-store, no-cache, private, must-revalidate');

@@ -15,34 +15,25 @@
                         }
                     }
                 }'>
-                <div class="intro-slide" style="background-image: url(/images/demos/demo-11/slider/slide-1.jpg);">
+                <% bannerData.forEach((data,index)=>{%>
+                <div class="intro-slide img-fluid" style="background-image: url('/productImages/<%= data.image %>');">
                     <div class="container intro-content">
-                        <h3 class="intro-subtitle text-primary">SEASONAL PICKS</h3>
-                        <h1 class="intro-title">Get All <br>The Good Stuff</h1>
-
-                        <a href="category.html" class="btn btn-outline-primary-2">
+                        <h3 class="intro-subtitle text-primary"></h3>
+                        <h1 class="intro-title text-white"></h1>
+                        <h2 class="intro-title"></h2>
+                        <a href="/shop" class="btn btn-outline-primary-2 min-width-sm mt-15">
                             <span>DISCOVER MORE</span>
                             <i class="icon-long-arrow-right"></i>
                         </a>
                     </div>
                 </div>
-
-                <div class="intro-slide" style="background-image: url(/images/demos/demo-11/slider/slide-2.jpg);">
-                    <div class="container intro-content">
-                        <h3 class="intro-subtitle text-primary">all at 50% off</h3>
-                        <h1 class="intro-title text-white">The Most Beautiful <br>Novelties In Our Shop</h1>
-                        <a href="category.html" class="btn btn-outline-primary-2 min-width-sm">
-                            <span>SHOP NOW</span>
-                            <i class="icon-long-arrow-right"></i>
-                        </a>
-                    </div>
-                </div>
+                <%})%>
             </div>
             <span class="slider-loader"></span>
         </div>
 
         <div class="d-flex justify-content-center pb-5">
-            <img src="/assetsmain/images/best.jpeg" width="90" alt="">
+            <img src="/assetsmain/images/best.jpeg" width="60" alt="">
             <h1 class="pt-2">B E S T</h1>
             <div class="d-flex" >
                 <h1 class="ml-5 pt-2">S E L L E R S</h1>

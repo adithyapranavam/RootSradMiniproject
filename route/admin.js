@@ -33,11 +33,13 @@ admin.post('/listCategory/:id',adminController.listCategory)
 admin.get('/viewproducts',adminController.productView);
 admin.get('/productCreate',adminController.productAdding);
 admin.post('/productCreate',multer.upload.array('image'),adminController.productAddingPost)
+
 admin.get('/product-edit/:id',adminController.productEdit)
 admin.post('/product-edit',multer.upload.array('image'),adminController.productEditPost)
 admin.post('/productUnlist/:id',adminController.productUnlist)
 admin.post('/productList/:id',adminController.productList)
 admin.post('/product-Search',adminController.productSearch ) 
+admin.get('/productDelete',adminController.productDelete)
 
 // coupon Route
 
@@ -47,4 +49,13 @@ admin.post('/coupons/couponsAdding',adminController.couponCreation)
 admin.get('/editCoupon',adminController. editCoupon )
 admin.post('/editCoupon',adminController.postEditCoupon)
 admin.get('/deleteCoupon',adminController.getCouponDelete)
+
+
+// BANNERS
+admin.get('/banner',adminController.banner)
+admin.get('/bannerAdding',adminController.bannerAdding)
+admin.post('/banner',multer.upload.array('image'),adminController.bannerPost)
+admin.get('/removeBanner',adminController.removeBanner)
+
+
 module.exports = admin;
