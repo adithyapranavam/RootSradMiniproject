@@ -223,6 +223,7 @@ const shop = async(req,res)=>
          try{
             
             let cart,cartCount,wishlist;
+            let Product;
             if(req.session.userData)
             {
                 const userData = await userModel.findOne({email:req.session.userData})
@@ -231,18 +232,285 @@ const shop = async(req,res)=>
                 cartCount = cart.length;
                 const wishlist = userData.wishlist.length
                 const data = await categoryCollection.find()
-                const products = await product.find();
+                const products = await product.find().limit(8);
                 const user = true;
+                
                 res.render('user/shop',{ wishlist,name,cartCount,user,products,data })
             }
         
-        }
+    }
         catch (error) {
             console.log("detaild page error" + error)
           
         }
 
     }
+    //4.category
+const sortfind = (req, res) => {
+    const value2 = req.body.va;
+    let value = Number(value2);
+    const checkbox = req.body.checkbox;
+    let { innerValue } = req.body;
+
+    if (checkbox.length == 0) {
+        product.find() 
+            .sort({ price: value })
+            .then((data) => {
+                if (!data) {
+                    res.status(404).send({ message: "Not found user with id" });
+                } else {
+                    // let datalength = data.length;
+                    // let lengthRes = Math.ceil(datalength/4);
+                    // let nextpage = ++innerValue;
+                    // let lenghtStart = (innerValue*4)-4;
+                    // let lenghtEnd = lenghtStart + 4;
+                    let nextpage = 1;
+                    let lenghtStart = 0;
+                    let lenghtEnd = 4;
+
+                    let result = data.filter((val, index) => index >= lenghtStart && index < lenghtEnd);
+                    result.push(nextpage);
+                    res.json(result);
+                }
+            })
+            .catch((err) => {
+                res.status(500).send({ message: "Error retriving user with id" });
+            });
+    } else {
+       
+        product.find({ category: { $in: checkbox } })
+            .sort({ price: value })
+            .then((data) => {
+                if (!data) {
+                    res.status(404).send({ message: "Not found user with id" });
+                } else {
+                    // console.log(data,"data========")
+                    // res.json(data);
+                    // let datalength = data.length;
+                    // let lengthRes = Math.ceil(datalength/4);
+                    // let nextpage = ++innerValue;
+                    // let lenghtStart = (innerValue*4)-4;
+                    // let lenghtEnd = lenghtStart + 4;
+                    let nextpage = 1;
+                    let lenghtStart = 0;
+                    let lenghtEnd = 4;
+                    let result = data.filter((val, index) => index >= lenghtStart && index < lenghtEnd);
+                    result.push(nextpage);
+                    res.json(result);
+                }
+            })
+            .catch((err) => {
+                res.status(500).send({ message: "Error retriving user with id" });
+            });
+    }
+};
+
+//5.
+const filterfind = async (req, res) => {
+
+    const value = req.body;
+  
+    // Productdb.find({ category: { $in: value } })
+    if (value.length == 0) {
+        const data = await product.find();
+        let nextpage = 1;
+        let lenghtStart = 0;
+        let lenghtEnd = 4;
+
+        let result = data.filter((val, index) => index >= lenghtStart && index < lenghtEnd);
+        result.push(nextpage);
+        res.json(result);
+    } else {
+     
+        const data = await product.find({ category: { $in: value } });
+   
+        let nextpage = 1;
+        let lenghtStart = 0;
+        let lenghtEnd = 4;
+
+        let result = data.filter((val, index) => index >= lenghtStart && index < lenghtEnd);
+        result.push(nextpage);
+        res.json(result);
+    }
+
+    // axios
+    //     .get("http://localhost:3000/user/filter/product", { params: { value } })
+    //     .then((response) => {
+    //         res.json(response.data);
+    //     })
+    //     .catch((err) => {
+    //         res.send(err);
+    //     });
+};
+
+//6
+const poductpagin = async (req, res) => {
+    const values = req.body.svalue;
+    const valuel = req.body.lvalue;
+    let { sortValue, checkbox, innerValue } = req.body;
+ 
+
+    if (sortValue == null && checkbox.length == 0) {
+      
+        product.find()
+            .then((data) => {
+                if (!data) {
+                    res.status(404).send({ message: "Not found user with id" });
+                } else {
+                    let datalength = data.length;
+                    let lengthRes = Math.ceil(datalength / 4);
+
+                    let nextpage = innerValue;
+                    let lenghtStart;
+                    let lenghtEnd;
+                    if (valuel == -1) {
+                        if (innerValue > 1) {
+                            nextpage = --innerValue;
+                        }
+                        lenghtStart = innerValue * 4 - 4;
+                        lenghtEnd = lenghtStart + 4;
+                        console.log(lenghtStart, lenghtEnd);
+                    } else {
+                        if (innerValue < lengthRes) {
+                            nextpage = ++innerValue;
+                        }
+                        lenghtStart = innerValue * 4 - 4;
+                        lenghtEnd = lenghtStart + 4;
+                        console.log(lenghtStart, lenghtEnd);
+                    }
+                    let result = data.filter((val, index) => index >= lenghtStart && index < lenghtEnd);
+                    result.push(nextpage);
+                    res.json(result);
+                }
+            })
+            .catch((err) => {
+                res.status(500).send({ message: "Error retriving user with id" });
+            });
+    } else if (sortValue !== null && checkbox.length == 0) {
+        product.find()
+            .sort({ price: sortValue })
+            .then((data) => {
+                if (!data) {
+                    res.status(404).send({ message: "Not found user with id" });
+                } else {
+                    let datalength = data.length;
+                    let lengthRes = Math.ceil(datalength / 4);
+
+                    let nextpage = innerValue;
+                    let lenghtStart;
+                    let lenghtEnd;
+                    if (valuel == -1) {
+                        if (innerValue > 1) {
+                            nextpage = --innerValue;
+                        }
+                        lenghtStart = innerValue * 4 - 4;
+                        lenghtEnd = lenghtStart + 4;
+                        console.log(lenghtStart, lenghtEnd);
+                    } else {
+                        if (innerValue < lengthRes) {
+                            nextpage = ++innerValue;
+                        }
+                        lenghtStart = innerValue * 4 - 4;
+                        lenghtEnd = lenghtStart + 4;
+                        console.log(lenghtStart, lenghtEnd);
+                    }
+                    let result = data.filter((val, index) => index >= lenghtStart && index < lenghtEnd);
+                    result.push(nextpage);
+                    res.json(result);
+                }
+            })
+            .catch((err) => {
+                res.status(500).send({ message: "Error retriving user with id" });
+            });
+    } else if (sortValue == null && checkbox.length > 0) {
+        product.find({ category: { $in: checkbox } })
+            .then((data) => {
+                if (!data) {
+                    res.status(404).send({ message: "Not found user with id" });
+                } else {
+                    let datalength = data.length;
+                    let lengthRes = Math.ceil(datalength / 4);
+
+                    let nextpage = innerValue;
+                    let lenghtStart;
+                    let lenghtEnd;
+                    if (valuel == -1) {
+                        if (innerValue > 1) {
+                            nextpage = --innerValue;
+                        }
+                        lenghtStart = innerValue * 4 - 4;
+                        lenghtEnd = lenghtStart + 4;
+                        console.log(lenghtStart, lenghtEnd);
+                    } else {
+                        if (innerValue < lengthRes) {
+                            nextpage = ++innerValue;
+                        }
+                        lenghtStart = innerValue * 4 - 4;
+                        lenghtEnd = lenghtStart + 4;
+                        console.log(lenghtStart, lenghtEnd);
+                    }
+                    let result = data.filter((val, index) => index >= lenghtStart && index < lenghtEnd);
+                    result.push(nextpage);
+                    res.json(result);
+                }
+            })
+            .catch((err) => {
+                res.status(500).send({ message: "Error retriving user with id" });
+            });
+    } else if (sortValue !== null && checkbox.length > 0) {
+        product.find({ category: { $in: checkbox } })
+            .sort({ price: sortValue })
+            .then((data) => {
+                if (!data) {
+                    res.status(404).send({ message: "Not found user with id" });
+                } else {
+                    let datalength = data.length;
+                    let lengthRes = Math.ceil(datalength / 4);
+
+                    let nextpage = innerValue;
+                    let lenghtStart;
+                    let lenghtEnd;
+                    if (valuel == -1) {
+                        if (innerValue > 1) {
+                            nextpage = --innerValue;
+                        }
+                        lenghtStart = innerValue * 4 - 4;
+                        lenghtEnd = lenghtStart + 4;
+                        console.log(lenghtStart, lenghtEnd);
+                    } else {
+                        if (innerValue < lengthRes) {
+                            nextpage = ++innerValue;
+                        }
+                        lenghtStart = innerValue * 4 - 4;
+                        lenghtEnd = lenghtStart + 4;
+                        console.log(lenghtStart, lenghtEnd);
+                    }
+                    let result = data.filter((val, index) => index >= lenghtStart && index < lenghtEnd);
+                    result.push(nextpage);
+                    res.json(result);
+                }
+            })
+            .catch((err) => {
+                res.status(500).send({ message: "Error retriving user with id" });
+            });
+    } else {
+        await product.find({})
+            .skip(values)
+            .limit(valuel)
+
+            .then((data) => {
+                if (!data) {
+                    res.status(404).send({ message: "Not found user with id" });
+                } else {
+                    res.json(data);
+                }
+            })
+            .catch((err) => {
+                res.status(500).send({ message: "Error retriving user with id" });
+            });
+    }
+};
+
 const productView = async(req,res)=>
 
 {
@@ -271,8 +539,8 @@ const productView = async(req,res)=>
         const category = await product.find({ category: cate }).sort({ _id: -1 }).limit(4);
 
         res.render('user/productView',{data,name,user,category,cartCount,wishlist})  
-    }
-}
+    } 
+} 
     catch (error) {
         console.log("detaild page error" + error)
       
@@ -947,6 +1215,9 @@ module.exports = {
     geteditAddress,
     updateaddress,
     remove,
-    shop  
+    shop,
+    sortfind,
+    filterfind,
+    poductpagin
 }
 

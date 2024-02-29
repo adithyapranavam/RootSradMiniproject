@@ -8,6 +8,12 @@ const profileController = require("../controllers/profileControllers");
 Router.get("/", userController.home);
 Router.get("/home", userController.home);
 Router.get('/shop',userController.shop)
+Router.post("/poduct/sortfind", userController.sortfind);
+
+Router.post("/poduct/filter", userController.filterfind);
+
+Router.post("/poduct/pagin", userController.poductpagin);
+
 
 //USER LOGIN
 Router.get("/login", userController.login);

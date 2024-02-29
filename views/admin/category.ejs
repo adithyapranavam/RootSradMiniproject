@@ -14,7 +14,7 @@
    <div id="sidebar-wrapper" data-simplebar="" data-simplebar-auto-hide="true">
      <div class="brand-logo">
       <a href="index.html">
-       <img src="/assets/images/logo-icon.png" class="logo-icon" alt="logo icon">
+       <img src="/assets/images/add.png" class="logo-icon" alt="">
        <h5 class="logo-text">RootSraad Admin</h5>
      </a>
    </div>
@@ -51,6 +51,11 @@
       <li>
         <a href="/admin/banner">
           <i class="zmdi zmdi-grid"></i> <span>Banner Details</span>
+        </a>
+      </li>
+      <li>
+        <a href="/admin/signout">
+          <i class="zmdi zmdi-grid"></i> <span>logout</span>
         </a>
       </li>
     </ul>
@@ -100,6 +105,7 @@
                <table class="table">
                   <thead>
                     <tr>
+                      <th scope="col">ID</th>
                       <th scope="col">Name</th>
                       <th scope="col">Discription</th>
                       <th scope="col">Availability</th>
@@ -107,8 +113,9 @@
                     </tr>
                   </thead>
               <tbody>
-                <% data.forEach(element => {%>
+                <% data.forEach((element,index) => {%>
                   <tr id="coupon-">
+                    <td  scope="col" class="px-4"><%= index+1 %></td>
                     <td  scope="col" class="px-4"><%= element.categoryName %></td>
                     <td  scope="col" class="px-4"><%= element. categoryDescription %></td>
                     <td  scope="col" class="px-4">

@@ -59,9 +59,8 @@ const multer = require('../middleware/multer');
      const adminLogout = async(req,res)=>
      {
             try {
-                req.session.destroy()
-                console.log("admin logout successfully")
-                res.redirect("admin/adminLogin")
+                req.session.admin= null;
+                res.redirect("/admin")
                 alert("Admin Logout Successfully")
             } catch (err) {
                 console.log("Error in admin logout")
