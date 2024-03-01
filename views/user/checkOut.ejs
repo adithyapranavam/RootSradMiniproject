@@ -12,7 +12,7 @@
         <div class="container">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="/">Home</a></li>
-                <li class="breadcrumb-item"><a href="#">Shop</a></li>
+                <li class="breadcrumb-item"><a href="/shop">Shop</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Checkout</li>
             </ol>
         </div>
@@ -98,42 +98,7 @@
                                         </tr>
                                     </tbody>
                                 </table>
-                            <!-- <div class=" p-2 px-3 my-3 border billinf_form_Wrapper">
-                                    <div class=" billing_form">
-                                        <% address.forEach((data,index)=>{%>
-                                            <div class="d-flex align-items-center gap-2">
-                                                <input type="radio" name="selectedAddress" id="selectedAddress"
-                                                    value="<%=data._id%>" required>
-                                                <h6>Select Address</h6>
-                                            </div>
-                                            <div class="address p-2 px-3">
-                                                <span style="color: #9a9a9a; font-size: 13.5px;">
-                                                    <Span>
-                                                        <%=data.name%>,
-                                                    </Span>
-                                                    <Span>
-                                                        <%=data.houseName%>,
-                                                    </Span>
-                                                    <Span>
-                                                        <%=data.street%>,
-                                                    </Span>
-                                                    <Span>
-                                                        <%=data.city%>,
-                                                    </Span>
-                                                    <Span>
-                                                        <%=data.state%>,
-                                                    </Span>
-                                                    <br>
-                                                    <Span>Ph :<%=data.phone%>,</Span>
-                                                    <Span>Pin :<%=data.postalCode%></Span>
-                                                </span>
-                                            </div>
-                                            <div class="mt-2">
-                                                <hr class="bg-dark p-0 ">
-                                            </div>
-                                            <%})%>
-                                    </div>
-                                </div> -->
+                       
                                 <div class="accordion-summary" id="accordion-payment">
                                        
                                             <div class="card-header" id="heading-3">
@@ -153,14 +118,14 @@
                           
                                <br>
                                     <div class="cart-discount">
-                                      <form action="#">
+                                      
                                         <div class="input-group">
-                                          <input type="text"class="form-control"required placeholder="coupon code...."/>
-                                            <button style="height:40px" class="btn btn-outline-primary-2" type="submit">
+                                          <input type="text" name="coupon" id="couponValue" class="form-control" required placeholder="coupon code...."/>
+                                            <button style="height:40px" id="couponButton" class="btn btn-outline-primary-2" type="button">
                                               <i  class ="icon-long-arrow-right"></i>
                                             </button>
                                         </div>
-                                      </form>
+                                    
                                     </div>
                                     <span class="px-2 p-1 col-lg-12 col-12" style="font-size: 14px; color: #9a9a9a;">
                                         Available Coupons?
@@ -168,7 +133,37 @@
                                             Click Here
                                         </a>
                                     </span>
-                        </aside>
+                                    <div id="modal" class="modal">
+                                        <div class="modal-content">
+                                            <div class="modalWrapper">
+                                                <div class="modelWrapper2">
+                                                    <span class="close">&times;</span>
+                                                    <h4 class="mb-4 text-dark fw-bold ms-3">Select your Coupon</h4>
+                                                    <ul  id="couponList" style="list-style: none; color: #ca761c;">
+                                                        <% if(coupon.length>0){%>
+                                                            <%coupon.forEach((data,index)=>{%>
+                                                  
+                                                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                                                <li class="text-uppercase fw-bold">#<%=index+1%></li>
+                                                                <li class="text-uppercase fw-bold"><%=data.couponName%></li>
+                                                                <li class=" fw-bold"><%=data.couponValue%>%</li>
+                                                                <li class=" fw-bold"><%=data.expiryDate%></li>
+                                                                <li class=" fw-bold">₹<%=data.minValue%></li>
+
+                                                                <li><img src="/assets/icons/178921.png" alt="" class="img-fluid" width="25px"></li>
+                                                            </div>
+                                                            <%})%>
+                                                            <%}else{%>
+                                                            <lottie-player src="https://assets1.lottiefiles.com/temp/lf20_LJK4oD.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
+                                                            <%}%>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <span id="CouponResultS" class="px-2 p-1 col-lg-12 col-12 text-success" style="font-size: 14px;"></span>
+                                    <span id="CouponResultF" class="px-2 p-1 col-lg-12 col-12 text-danger" style="font-size: 14px;"></span>
+                        </aside>https://lottiefiles.com/animations/search-file-4Xyy3zQKe7?from=search
                     </div>
             </div>
         </div>
@@ -250,4 +245,102 @@
     </div>
 
     <script src="./js/validation.js"></script>
+       <!-- modal -->
+       <script>  
+        const closeModal = document.getElementsByClassName("close")[0];
+        const modal = document.getElementById("modal");
+        modal.style.display = "none";
+        // Open the modal when the button is clicked
+        function openModal() {
+            const couponList = document.getElementById("couponList");
+            const testCoupon = document.getElementById("testCoupon");
+            modal.style.display = "block";
+        };
+        couponList.addEventListener("click", (event) => {
+                if (event.target.tagName === "LI") {
+                    const couponCode = event.target.textContent;
+                    navigator.clipboard.writeText(couponCode)
+                        .then(() => {
+                            alert("Coupon code copied: " + couponCode);
+                            modal.style.display = "none";
+                        })
+                        .catch(error => {
+                            console.error("Error copying coupon code:", error);
+                        });
+                }
+            });
+        closeModal.addEventListener("click", () => {
+            modal.style.display = "none";
+        });
+        window.addEventListener("click", (event) => {
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        });
+        const openModalBtn = document.getElementById("openModalBtn");
+        openModalBtn.addEventListener("click", openModal);
+
+    </script>
+    <!-- coupon -->
+    <script>
+        const inputValueInput = document.getElementById("couponValue");
+        const couponButton = document.getElementById('couponButton');
+        const DiscountRate = document.getElementById('discountRate');
+        const GrantTotall = document.getElementById('GrantTotall');
+        const amount = document.getElementById('amount');
+        couponButton.addEventListener('click',()=>{
+            const inputValue = inputValueInput.value;
+            const NewAmount  = amount.value;
+              const requestBody = {
+                coupon:inputValue,
+                amount:NewAmount
+              }
+
+              fetch('/coupons/couponValidation',{
+                method:'post',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body: JSON.stringify(requestBody) 
+              })
+              .then(response => response.json())
+              .then(data =>{
+                const msg = data.message;
+                const coupon = data.coupon;
+                const NewTotall = amount.value-coupon.couponValue;
+                const CouponResultS = document.getElementById('CouponResultS');
+                const CouponResultF = document.getElementById('CouponResultF');
+                const CurrentDi_Price =document.getElementById('discountRate');
+                const Discount_Inte = parseInt(CurrentDi_Price.innerText);
+
+                if(msg == 'Coupon is succefully Added'){
+                    DiscountRate.innerText = Discount_Inte +parseInt(coupon.couponValue);
+                    GrantTotall.innerText = NewTotall;
+                    amount.value = NewTotall;
+                    CouponResultS.style.display = 'block';
+                    CouponResultS.innerText = "Coupon is succefully Added";
+                     setTimeout(() => {
+                     CouponResultS.style.display = 'none';
+                     }, 2000);
+                }else if(msg == 'Coupon Not Valid' || msg === 'Please Use A Valid Coupon'){
+                    CouponResultS.style.display = 'block';
+                    CouponResultF.innerText = "Please Use A Valid Coupon";
+                    setTimeout(() => {
+                     CouponResultF.style.display = 'none';
+                     }, 2000);
+                }else if(msg == 'You Already Use This Coupon'){
+                    CouponResultS.style.display = 'block';
+                    CouponResultF.innerText = "You Already Use This Coupon";
+                    setTimeout(() => {
+                     CouponResultF.style.display = 'none';
+                     }, 2000);
+                }
+              })
+              .catch(error =>{
+                console.log("Error applying coupon:", error);
+              })
+        })
+
+    </script>
+
 <%- include('../partials/userfooter.ejs') %>

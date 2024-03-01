@@ -20,9 +20,11 @@ Router.get("/login", userController.login);
 Router.post('/login',userController.loginPost);
 Router.post('/loginOtpValidation',userController.loginOtpValidation)
 Router.get('/logout',userController.signout)
+
 Router.get('/forgotPassword',userController.forGotPassword)
 Router.post('/numberValidation',userController.numberValidation);
-// Router.post('/newPassword',userController.newPassword);
+Router.post('/resetPassword',userController.resetPassword);
+Router.post('/newPassword',userController.newPassword);
 
 //Sign Up  
 Router.get("/signup", userController.signup);
@@ -55,6 +57,11 @@ Router.post('/addaddresscheckout',userController.toAddAddressCheckout)
 Router.get('/editAddress',userController.geteditAddress)
 Router.post('/updateAddress',userController.updateaddress)
 Router.get('/deleteAddress',userController.remove)
+
+// COUPON
+
+// Router.post('/coupons/couponValidation',userController.coupons)
+
 // success
 Router.get('/success', userController.successTick);
 

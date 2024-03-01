@@ -11,19 +11,13 @@ const { name } = require('ejs');
     
   
 const API = "LpKOkcUND4ClatShjgRIH2FVPG1wbn7sx9BfZeE03QrozXA6WdbwJ2VIs6laoPdzDC14KrOtWTuRA0vm"
-// const API = '5up7TU2xUT3b03fmU8g3RwLblLzzewFJCFLvXl9HUseNiiSp93nZ1MiE2aFM'
+// const API = 'AMbqV6TDXnSDntWsXvqbB6Uk2LlF3n6MJoRZZhde4rodoehhYNFE7pf1vWqz' 
 
 // PASSWORD BCRYPT
-const SecurePassword = async(password)=>
-{
-    try{
-        const passwordSec = await bcrypt.hash(password,10);
-        return passwordSec;
-    }
-    catch(err)
-    {
-        console.log("error in bcrpt",err)
-    }
+// PASSWORD ENCRIPTION
+const pwdEncription = (password) => {
+    const hashedPWD = bcrypt.hash(password, 10)
+    return hashedPWD
 }
 
 //HOME PAGE
@@ -134,7 +128,7 @@ const login = async(req,res)=>
         const code = parseInt(num1 + num2 + num3 + num4);
         const email = req.session.data
         await OTP.find({ number: code })
-            .then((fount) => {
+            .then((fount) => { 
                 if (fount.length > 0) {
                     const succ = "Successfully LoggedIn"
                     req.session.userData = email
@@ -166,7 +160,7 @@ const forGotPassword = async(req,res)=>
 {
     try
     {
-              res.render("user/forgotPassword")
+              res.render("user/forgotPassword",{user:req.session.user})
     }
     catch(err)
     {
@@ -177,13 +171,18 @@ const numberValidation = async(req,res)=>
 {
     try
     {
+        console.log("kkkk");
         const number = req.body.number;
+        console.log(number+"nnnnn....");
         req.session.userNumber = number;
         const signinPage = 2;
-        const userExist = await user.findOne({number:number});
+        const userExist = await userModel.findOne({number:number});
+        console.log('i am number');
         if(userExist)
         {
+            console.log(userExist+"hhhh....");
             const randome = Math.floor(Math.random() * 9000) + 1000;
+            console.log(randome+"hhhhh");
             fast2sms.sendMessage({
                 authorization: API,
                 message: `Your verification OTP is: ${randome}`,
@@ -197,7 +196,7 @@ const numberValidation = async(req,res)=>
                 })
                 newUser.save()
                     .then(() => {
-                        res.render('user/verification', { signinPage });
+                        res.render('user/verification', {  user:req.session.user,signinPage });
                     })
                     .catch((error) => {
                         console.log("error generating numb", error);
@@ -211,12 +210,67 @@ const numberValidation = async(req,res)=>
     
     catch(err)
     {
-        const msg = "Server Error Wait for the Admin Response";
-        console.log("error At the number validation inreset place" + err);
-        res.status(500).render("user/forgotPassword", {  msg })
+       console.log(err);
     }
 }
 
+const resetPassword = async (req, res) => {
+    try {
+        const num1 = req.body.num_1;
+        const num2 = req.body.num_2;
+        const num3 = req.body.num_3;
+        const num4 = req.body.num_4;
+        const code = parseInt(num1 + num2 + num3 + num4);
+        const signinPage = 2;
+       
+        await OTP.find({ number: code })
+            .then((fount) => {
+                if (fount.length > 0) {
+                    res.render("user/resetPassword", { user: req.session.user})
+                    // IF FOUND, DELETE THE OTP CODE FROM DB
+                    OTP.findOneAndDelete({ number: code })
+                        .then(() => {
+                            console.log("successfully deleted")
+                        })
+                        .catch((err) => {
+                            console.log("error while deleting", err);
+                        });
+                } else {
+                  
+                    res.render('user/verification', { fal: "Please Check Your OTP", user: req.session.user, signinPage })
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+                res.render('user/verification', { fal: "Please Check Your OTP", user: req.session.user, signinPage })
+            })
+    } catch (error) {
+        console.log("reset password error" + error);
+    }
+}
+ 
+const newPassword = async (req, res) => {
+    try {
+        const psw = req.body.password;
+        console.log(psw);
+        const userNumber = req.session.userNumber;
+        console.log(userNumber);
+
+        // Use the actual password value, not the async function
+        const newpas = await userModel.findOneAndUpdate({ number: userNumber }, {
+            $set: {
+                password: psw
+            }
+        });
+
+        console.log(newpas, 'this is the new password');
+        req.session.userNumber = null;
+        const succ = "Successfully Changed Your Password"
+        res.render("user/successTick", { user: req.session.user, succ });
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 const shop = async(req,res)=>
 {
@@ -242,7 +296,7 @@ const shop = async(req,res)=>
         catch (error) {
             console.log("detaild page error" + error)
           
-        }
+        } 
 
     }
     //4.category
@@ -493,7 +547,7 @@ const poductpagin = async (req, res) => {
             .catch((err) => {
                 res.status(500).send({ message: "Error retriving user with id" });
             });
-    } else {
+    } else { 
         await product.find({})
             .skip(values)
             .limit(valuel)
@@ -1218,6 +1272,8 @@ module.exports = {
     shop,
     sortfind,
     filterfind,
-    poductpagin
+    poductpagin,
+    resetPassword,
+    newPassword
 }
 
