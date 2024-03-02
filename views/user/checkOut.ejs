@@ -87,14 +87,15 @@
                                         <tr class="summary-subtotal">
                                             <td>Subtotal:</td>
                                             <td>₹<%=totalPrice %></td>
+                                            <input type="hidden" id="amount" value="<%=totalPrice %>">
                                         </tr>
                                         <tr>
                                             <td>Shipping:</td>
                                             <td>Free shipping</td>
                                         </tr>
                                         <tr class="summary-total">
-                                            <td>Total:</td>
-                                            <td>$160.00</td>
+                                            <td >Total:</td>
+                                            <td id="newPriceTotal"></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -122,7 +123,7 @@
                                         <div class="input-group">
                                           <input type="text" name="coupon" id="couponValue" class="form-control" required placeholder="coupon code...."/>
                                             <button style="height:40px" id="couponButton" class="btn btn-outline-primary-2" type="button">
-                                              <i  class ="icon-long-arrow-right"></i>
+                                              <!-- <i  class ="icon-long-arrow-right"></i> -->Apply
                                             </button>
                                         </div>
                                     
@@ -133,37 +134,40 @@
                                             Click Here
                                         </a>
                                     </span>
-                                    <div id="modal" class="modal">
-                                        <div class="modal-content">
-                                            <div class="modalWrapper">
-                                                <div class="modelWrapper2">
-                                                    <span class="close">&times;</span>
-                                                    <h4 class="mb-4 text-dark fw-bold ms-3">Select your Coupon</h4>
-                                                    <ul  id="couponList" style="list-style: none; color: #ca761c;">
-                                                        <% if(coupon.length>0){%>
-                                                            <%coupon.forEach((data,index)=>{%>
-                                                  
-                                                            <div class="d-flex align-items-center justify-content-between mb-1">
-                                                                <li class="text-uppercase fw-bold">#<%=index+1%></li>
-                                                                <li class="text-uppercase fw-bold"><%=data.couponName%></li>
-                                                                <li class=" fw-bold"><%=data.couponValue%>%</li>
-                                                                <li class=" fw-bold"><%=data.expiryDate%></li>
-                                                                <li class=" fw-bold">₹<%=data.minValue%></li>
 
-                                                                <li><img src="/assets/icons/178921.png" alt="" class="img-fluid" width="25px"></li>
-                                                            </div>
-                                                            <%})%>
-                                                            <%}else{%>
-                                                            <lottie-player src="https://assets1.lottiefiles.com/temp/lf20_LJK4oD.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
-                                                            <%}%>
-                                                    </ul>
+                                    <div id="modal" class="modal" style="display: flex; align-items: center; justify-content: center;">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modalWrapper">
+                                                    <div class="modelWrapper2">
+                                                        <span class="close" style="padding-right: 10px;">&times;</span>
+                                                        <h4 class="mb-4 text-dark fw-bold ms-3 align-items-center text-center">Select your Coupon</h4>
+                                                        <ul id="couponList" style="list-style: none; color: #c58d0a; text-align: center;">
+                                                            <% if(coupon.length > 0) { %>
+                                                                <% coupon.forEach((data, index) => { %>
+                                                                    <div class="d-flex align-items-center justify-content-around mb-2">
+                                                                        <li class="text-uppercase fw-bold"><%= index+1 %></li>
+                                                                        <li class="text-uppercase fw-bold"><%= data.couponName %></li>
+                                                                        <li class="fw-bold"><%= data.couponValue %>%</li>
+                                                                        <li class="fw-bold"><%= data.expiryDate %></li>
+                                                                        <!-- <li><img src="/assets/icons/178921.png" alt="" class="img-fluid" width="25px"></li> -->
+                                                                    </div>
+                                                                <% }) %>
+                                                            <% } else { %>
+                                                                <lottie-player src="https://assets1.lottiefiles.com/temp/lf20_LJK4oD.json" background="transparent" speed="1" style="width: 300px; height: 300px;" loop autoplay></lottie-player>
+                                                            <% } %>
+                                                        </ul>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+                                    
+                                    
                                     <span id="CouponResultS" class="px-2 p-1 col-lg-12 col-12 text-success" style="font-size: 14px;"></span>
                                     <span id="CouponResultF" class="px-2 p-1 col-lg-12 col-12 text-danger" style="font-size: 14px;"></span>
-                        </aside>https://lottiefiles.com/animations/search-file-4Xyy3zQKe7?from=search
+
+                        </aside>
                     </div>
             </div>
         </div>
@@ -245,50 +249,62 @@
     </div>
 
     <script src="./js/validation.js"></script>
+
        <!-- modal -->
-       <script>  
+       <script>
         const closeModal = document.getElementsByClassName("close")[0];
         const modal = document.getElementById("modal");
         modal.style.display = "none";
+    
         // Open the modal when the button is clicked
-        function openModal() {
-            const couponList = document.getElementById("couponList");
-            const testCoupon = document.getElementById("testCoupon");
+        function openModal(event) {
+            event.preventDefault(); // Prevent the default behavior of the anchor tag or button
             modal.style.display = "block";
-        };
+        }
+        // function openModal() {
+        //     const couponList = document.getElementById("couponList");
+        //     const testCoupon = document.getElementById("testCoupon");
+        //     modal.style.display = "block";
+        // };
+        const couponList = document.getElementById("couponList");
         couponList.addEventListener("click", (event) => {
-                if (event.target.tagName === "LI") {
-                    const couponCode = event.target.textContent;
-                    navigator.clipboard.writeText(couponCode)
-                        .then(() => {
-                            alert("Coupon code copied: " + couponCode);
-                            modal.style.display = "none";
-                        })
-                        .catch(error => {
-                            console.error("Error copying coupon code:", error);
-                        });
-                }
-            });
+            if (event.target.tagName === "LI") {
+                const couponCode = event.target.textContent;
+                navigator.clipboard.writeText(couponCode)
+                    .then(() => {
+                        alert("Coupon code copied: " + couponCode);
+                        modal.style.display = "none";
+                    })
+                    .catch(error => {
+                        console.error("Error copying coupon code:", error);
+                    });
+            }
+        });
+    
         closeModal.addEventListener("click", () => {
             modal.style.display = "none";
         });
+    
         window.addEventListener("click", (event) => {
             if (event.target === modal) {
                 modal.style.display = "none";
             }
         });
+    
         const openModalBtn = document.getElementById("openModalBtn");
         openModalBtn.addEventListener("click", openModal);
-
     </script>
+    
     <!-- coupon -->
     <script>
+
         const inputValueInput = document.getElementById("couponValue");
         const couponButton = document.getElementById('couponButton');
         const DiscountRate = document.getElementById('discountRate');
         const GrantTotall = document.getElementById('GrantTotall');
         const amount = document.getElementById('amount');
         couponButton.addEventListener('click',()=>{
+          
             const inputValue = inputValueInput.value;
             const NewAmount  = amount.value;
               const requestBody = {
@@ -305,15 +321,25 @@
               })
               .then(response => response.json())
               .then(data =>{
+                console.log(data);
                 const msg = data.message;
                 const coupon = data.coupon;
-                const NewTotall = amount.value-coupon.couponValue;
+                const newPrice = data?.newPrice
+                const NewTotall = amount.value-coupon.couponValue;   
+         
                 const CouponResultS = document.getElementById('CouponResultS');
+                const  newPriceTotal = document.getElementById('newPriceTotal');
+           
                 const CouponResultF = document.getElementById('CouponResultF');
+
+             
                 const CurrentDi_Price =document.getElementById('discountRate');
-                const Discount_Inte = parseInt(CurrentDi_Price.innerText);
+              
+                // const Discount_Inte = parseInt(CurrentDi_Price.innerText);
 
                 if(msg == 'Coupon is succefully Added'){
+              
+                    newPriceTotal.innerHTML= newPrice
                     DiscountRate.innerText = Discount_Inte +parseInt(coupon.couponValue);
                     GrantTotall.innerText = NewTotall;
                     amount.value = NewTotall;

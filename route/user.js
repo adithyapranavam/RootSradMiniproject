@@ -59,8 +59,7 @@ Router.post('/updateAddress',userController.updateaddress)
 Router.get('/deleteAddress',userController.remove)
 
 // COUPON
-
-// Router.post('/coupons/couponValidation',userController.coupons)
+Router.post('/coupons/couponValidation',userController.coupons)
 
 // success
 Router.get('/success', userController.successTick);

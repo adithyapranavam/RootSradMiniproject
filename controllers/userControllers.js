@@ -171,18 +171,18 @@ const numberValidation = async(req,res)=>
 {
     try
     {
-        console.log("kkkk");
+        
         const number = req.body.number;
-        console.log(number+"nnnnn....");
+        
         req.session.userNumber = number;
         const signinPage = 2;
         const userExist = await userModel.findOne({number:number});
-        console.log('i am number');
+      
         if(userExist)
         {
-            console.log(userExist+"hhhh....");
+            
             const randome = Math.floor(Math.random() * 9000) + 1000;
-            console.log(randome+"hhhhh");
+            console.log(randome+" i am OTP");
             fast2sms.sendMessage({
                 authorization: API,
                 message: `Your verification OTP is: ${randome}`,
@@ -825,7 +825,26 @@ const AddCart = async(req,res)=>
             userData.cart.items.push(newcartitem)
     }
     await userData.save()
- 
+    const subTotal = cartItems.reduce((total, item) => total +( item.realPrice * item.quantity) , 0);
+  
+    const cartProductIds = cartItems.map(item => item.productId);
+    const cartProducts = await product.find({ _id: { $in: cartProductIds } });
+    let totalPrice = 0;
+    
+    for (const item of cartItems) {
+        const product = cartProducts.find(prod => prod._id.toString() === item.productId.toString());
+        if (product) {
+            totalPrice += item.quantity * product.price;
+          
+        } else {
+            console.log(`Product not found for item: ${item.productId}`);
+        }
+    }
+    // const user = true
+    const discount = Math.abs(totalPrice - subTotal).toFixed(2);
+    totalPrice = Math.abs(totalPrice).toFixed(2);
+    userData.total = totalPrice
+    await userData.save()
     res.json('successfully cart u r product')
 }
    catch(err)
@@ -1055,6 +1074,7 @@ const Checkout = async (req, res) => {
             const address = userDetails.address;
             let totalPrice = 0;
             totalPrice = cartItems.reduce((total,item) => total + item.price,0);
+            totalPrice = Math.abs(totalPrice).toFixed(2);
             const discount = Math.abs(totalP_Price - totalPrice)
             const user = true;
             res.render('user/checkOut', {
@@ -1078,6 +1098,71 @@ const Checkout = async (req, res) => {
         res.redirect('/login')
     }
 }
+// Coupon
+const coupons = async (req, res) => {
+
+ 
+    const userEmail = req.session.userData;
+    if(req.session.userData){
+    try {
+     
+        const couponCode = req.body.coupon;
+        const TotalAmount = req.body.amount;
+        const userDetails = await userModel.findOne({ email: userEmail });
+        const userDataId = userDetails._id;
+      
+        const couponValue = await couponModle.findOne({ couponName: couponCode });
+       
+        const date = new Date();
+        const formattedDate = date.toLocaleDateString();
+        const expiryDate = couponValue.expiryDate;
+
+        if (!couponValue) {
+            res.json({ message: 'Coupon Not Valid' });
+        } else if (couponValue) {
+            const userExist = couponValue.userId.includes(userDataId);
+            if (!userExist) {
+              
+                if ( TotalAmount >= couponValue.minValue) {
+                    
+                    let amount = userDetails.total
+                    let maxxValue = couponValue.maxValue 
+                    let copvalue = Number(couponValue.couponValue)
+                    let result = amount * copvalue / 100;
+                    let lowPrice;
+                    if(result<=maxxValue)
+                    {
+                            let copvalue = Number(couponValue.couponValue)
+                            let result = amount * copvalue / 100;
+                             lowPrice = amount - result
+                            
+                    }else{
+                         lowPrice =  amount - maxxValue
+                       
+                    }
+                    userDetails.total=lowPrice;
+                    await userDetails.save()
+                    await couponModle.updateOne({ couponName: couponCode }, { $push: { userId: userDataId } });
+                    res.json({ message: 'Coupon is succefully Added', coupon: couponValue,newPrice: lowPrice});
+
+                } else {
+                    res.json({ message: 'Coupon Expired', coupon: couponValue });
+                }
+            } else {
+                res.json({ message: 'You Already Use This Coupon', coupon: couponValue });
+            }
+
+        }
+    }
+    catch (error) {
+        console.log(error);
+        res.json('CouponExpired');
+    }
+}else{
+    res.redirect('/login')
+}
+}
+
 const getAddress = async(req,res)=>
 {
  try{
@@ -1251,7 +1336,8 @@ module.exports = {
     signout,
     forGotPassword,
     numberValidation,
-    // newPassword
+    resetPassword,
+    newPassword,
     productView,
     loadcart,
     AddCart,
@@ -1273,7 +1359,6 @@ module.exports = {
     sortfind,
     filterfind,
     poductpagin,
-    resetPassword,
-    newPassword
+    coupons
 }
 
