@@ -33,6 +33,7 @@ app.use(session({
 
 // PORT SETTING
 const PORT = process.env.PORT || 1996;
+const key = process.env.KEY;
 
 // EJS SETTING
 app.set("view engine", "ejs");

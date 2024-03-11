@@ -40,7 +40,7 @@
                                             <div class="col-lg-9 ">
                                                 <div class="card card-dashboard  border border-3 rounded">
                                                     <div class="card-body">
-                                                        <input type="radio" name="selectedAddress" id="selectedAddress"
+                                                        <input type="radio" name="selectedAddress" id="selectedAddress" onclick="address('<%=data._id%>')"
                                                         value="<%=data._id%>" required>
                                                          <p>
                                                             <%=data.fullname%><br>
@@ -105,16 +105,17 @@
                                             <div class="card-header" id="heading-3">
                                                 <h2 class="card-title">
     
-                                                    <input type="radio" value="COD" name="payment" checked> Cash on
+                                                    <input  onclick="payments('Cash on delivery')" type="radio" value="Cash on delivery" name="payment" checked> Cash on
                                                     delivery<br>
-                                                    <input type="radio" value="online payment" name="payment" class="mt-1">
+                                                    <input type="radio"  onclick="payments('Razorpay')"  value="Razorpay" name="payment" class="mt-1">
                                                     Online payment<br>
                                                 </h2>
                                                 <br>
-                                <button type="submit" class="btn btn-outline-primary-2 btn-order btn-block">
+                                <button type="submit" onclick="odderPost()" class="btn btn-outline-primary-2 btn-order btn-block">
                                     <span class="btn-text">Place Order</span>
                                     <span class="btn-hover-text">Proceed to Checkout</span>
                                 </button>
+                               
                             </div>
                           
                                <br>
@@ -123,7 +124,7 @@
                                         <div class="input-group">
                                           <input type="text" name="coupon" id="couponValue" class="form-control" required placeholder="coupon code...."/>
                                             <button style="height:40px" id="couponButton" class="btn btn-outline-primary-2" type="button">
-                                              <!-- <i  class ="icon-long-arrow-right"></i> -->Apply
+                                              <i  class ="icon-long-arrow-right"></i>
                                             </button>
                                         </div>
                                     
@@ -261,11 +262,7 @@
             event.preventDefault(); // Prevent the default behavior of the anchor tag or button
             modal.style.display = "block";
         }
-        // function openModal() {
-        //     const couponList = document.getElementById("couponList");
-        //     const testCoupon = document.getElementById("testCoupon");
-        //     modal.style.display = "block";
-        // };
+       
         const couponList = document.getElementById("couponList");
         couponList.addEventListener("click", (event) => {
             if (event.target.tagName === "LI") {
@@ -304,7 +301,7 @@
         const GrantTotall = document.getElementById('GrantTotall');
         const amount = document.getElementById('amount');
         couponButton.addEventListener('click',()=>{
-          
+          console.log("addEventListener");
             const inputValue = inputValueInput.value;
             const NewAmount  = amount.value;
               const requestBody = {
@@ -321,8 +318,9 @@
               })
               .then(response => response.json())
               .then(data =>{
-                console.log(data);
+                
                 const msg = data.message;
+                console.log(msg);
                 const coupon = data.coupon;
                 const newPrice = data?.newPrice
                 const NewTotall = amount.value-coupon.couponValue;   
@@ -340,7 +338,7 @@
                 if(msg == 'Coupon is succefully Added'){
               
                     newPriceTotal.innerHTML= newPrice
-                    DiscountRate.innerText = Discount_Inte +parseInt(coupon.couponValue);
+                    DiscountRate.innerText = Discount_Inte + parseInt(coupon.couponValue);
                     GrantTotall.innerText = NewTotall;
                     amount.value = NewTotall;
                     CouponResultS.style.display = 'block';
@@ -349,6 +347,7 @@
                      CouponResultS.style.display = 'none';
                      }, 2000);
                 }else if(msg == 'Coupon Not Valid' || msg === 'Please Use A Valid Coupon'){
+                    console.log("inside coupon value");
                     CouponResultS.style.display = 'block';
                     CouponResultF.innerText = "Please Use A Valid Coupon";
                     setTimeout(() => {
@@ -368,5 +367,140 @@
         })
 
     </script>
+    	
+        <script>
+            console.log("second script");
+         let addressval ;
+        let paymentval = "Cash on delivery" ;
+
+
+        function address(value){
+		addressval=value
+		console.log(addressval+"addressval")
+	}
+
+	function payments(value){
+		paymentval=value
+		console.log(paymentval+"payment")
+	}
+
+function odderPost(){
+
+console.log(addressval)
+console.log(paymentval) 
+// /oddersuccesspost
+fetch("/odder/successpost/Check", {
+method: "post",
+headers: {
+    "Content-Type": "application/json",
+    // Add any other headers here if needed
+},
+body: JSON.stringify({}),
+})
+.then((response) => {
+    return response.json();
+
+})
+.then((data) => {
+    console.log("data response");
+    if(data.odderNext == true){
+console.log("true....");
+
+        fetch("/oddersuccesspost", {
+method: "post",
+headers: {
+    "Content-Type": "application/json",
+    // Add any other headers here if needed
+},
+body: JSON.stringify({addresid:addressval,payment:paymentval}),
+})
+.then((response) => {
+    return response.json();
+
+})
+.then((data) => {
+    
+    if(data?.payment == "Cash on delivery" ){
+        
+        console.log("Cash on delivery odder successful");
+        // showToast('odder successful');
+        window.location.href = '/oderSucess';
+    }else{
+        console.log("razorpay odder successful");
+        console.log(data);
+        rpcall(data)
+        
+    }
+
+})
+.catch((err) => console.log(err));
+
+    }else{
+        
+        console.log("odderNext false continue");
+        // location.reload();
+        // showToast('Product not avilable');
+    }
+
+    // rpcall(data)
+    // Example usage:
+    // showToast('odder successfull!');
+})
+
+.catch((err) => console.log(err,"last errror"));
+
+
+}
+
+
+function rpcall(data) {
+    console.log(data,".........");
+    const {amount}=data.order
+					var options = {
+    "key": "rzp_test_zVBhrL4CVfIezv", // Enter the Key ID generated from the Dashboard
+    "amount": amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    "currency": "INR",
+    "name": "ROOTSRAD",
+    "description": "Test Transaction",
+    "image": "https://example.com/your_logo",
+    "order_id": data.id, //This is a sample Order ID. Pass the id obtained in the response of Step 1
+    "handler": function (response){
+        // alert(response.razorpay_payment_id);
+        // alert(response.razorpay_order_id);
+        // alert(response.razorpay_signature)
+		// showToast('Odder successful');
+        window.location.href = '/oderSucess';
+    },
+    "prefill": {
+        "name": "Gaurav Kumar",
+        "email": "gaurav.kumar@example.com",
+        "contact": "9000090000"
+    },
+    "notes": {
+        "address": "Razorpay Corporate Office"
+    },
+    "theme": {
+        "color": "#3399cc"
+    }
+};
+
+var rzp1 = new Razorpay(options);
+rzp1.on('payment.failed', function (response){
+
+	// showToast('Odder Failed');
+
+        alert(response.error.code);
+        alert(response.error.description);
+        alert(response.error.source);
+        alert(response.error.step);
+        alert(response.error.reason);
+        alert(response.error.metadata.order_id);
+        alert(response.error.metadata.payment_id);
+});
+rzp1.open();
+				}
+			
+        </script>
+   
 
 <%- include('../partials/userfooter.ejs') %>

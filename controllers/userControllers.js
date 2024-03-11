@@ -3,8 +3,11 @@ const product = require('../model/productmodel')
 const couponModle = require('../model/coupon');
 const categoryCollection = require("../model/categorymodel");
 const bannerModel = require('../model/banner');
+const OrderModel = require('../model/order');
+const Ordersdb = require('../model/ordernew')
 const bcrypt = require('bcrypt');
-const fast2sms = require('fast-two-sms');  
+const fast2sms = require('fast-two-sms'); 
+const Razorpay = require('razorpay'); 
 const OTP = require('../model/otpmodel');  
 const { isValidObjectId } = require('mongoose');
 const { name } = require('ejs');
@@ -844,6 +847,7 @@ const AddCart = async(req,res)=>
     const discount = Math.abs(totalPrice - subTotal).toFixed(2);
     totalPrice = Math.abs(totalPrice).toFixed(2);
     userData.total = totalPrice
+    
     await userData.save()
     res.json('successfully cart u r product')
 }
@@ -961,17 +965,17 @@ const WishListLoad = async (req, res) => {
             const userDetails = await userModel.findOne({ email: userEmail });
             const name =  userDetails.name
             const productData = userDetails.wishlist;
-            // console.log(productData);
+       
             const cart = userDetails.cart.items;
             const cartCount = cart.length;
             const wishlist = userDetails.wishlist.length
-            // item.productId.toString() === id
+       
             const productId = productData.map(items => items.productId);
-            // console.log(productId+"iam productId");
+       
             const productDetails = await product.find({ _id: { $in: productId } });
-            console.log(productDetails+"i am productDetails");
+           
             const price = productDetails.originalprice - (productDetails.originalprice * productDetails.productOffer) / 100
-            // console.log(price,"price....")
+         
             const user = true
             res.render('user/wishlist', { user, price, productDetails, cartCount,name,wishlist })
         } else {
@@ -1057,9 +1061,7 @@ const Checkout = async (req, res) => {
      
             const userDetails = await userModel.findOne({ email: userEmail });
             console.log(userDetails);
-            
             const currentUserID = userDetails._id;
-            // console.log(currentUserID+"+++");
             const name =  userDetails.name
             const cartItems = userDetails.cart.items;
             const cartCount = cartItems.length;
@@ -1098,6 +1100,181 @@ const Checkout = async (req, res) => {
         res.redirect('/login')
     }
 }
+
+ const oderAvailable = async (req,res)=>
+ {
+    const userEmail = req.session.userData;
+    try
+       { 
+            let odderPost = true;
+            const user = await userModel.findOne({email: userEmail});
+            let end = user.cart.items.length-1
+            const value =   user.cart.items.map(async (val, i) =>
+             {
+                let prid = val.productId;
+                const products = await product.findById({ _id: prid });
+        
+                let prs = products.quantity;
+        
+                let pri = val.quantity;
+                if (prs - pri <= 0) 
+                {
+                    odderPost = false;
+                    res.json({ odderNext: odderPost});
+                }
+
+                if(end == i && odderPost !== false)
+                {
+                    res.json({ odderNext: odderPost});
+                }     
+            })   
+        }
+        catch(err) 
+        {
+        console.log("console the error");
+        console.log(err)
+        }
+
+    }
+
+     const odderSuccsspost = async(req,res)=>
+     {
+     
+        const userEmail = req.session.userData;
+        try
+        {
+          
+                const addressid = req.body.addresid;
+                const paymentmethode = req.body.payment;
+                let total;
+                console.log(addressid,"addressid");
+                console.log(paymentmethode,"paymentmethode");
+                    if(1==1){
+                    const user = await userModel.findOne({email: userEmail});
+                    const userid = user._id
+                    const value = user.cart.items.map(async (val, i) => {
+                        let prid = val.productId;
+            
+                        const products = await product.findById({ _id: prid });
+            
+                        let prs = products.quantity;
+            
+                        let pri = val.quantity;
+                        
+            
+                        products.quantity = prs - pri;
+                        products.save();
+                    });
+
+                    const Adress = user.address.filter((data)=>data._id==addressid)
+                    console.log(Adress,"address");
+                    console.log(userid,req.body.payment,Adress[0].fullname, Adress[0].mobile,Adress[0].pin,Adress[0].state,Adress[0].city, Adress[0].city,Adress[0].houseName,Adress[0].country);
+                    const Orders = new Ordersdb({
+                        userId: userid,
+                        payment: req.body.payment,
+                        fullname: Adress[0].fullname,
+                        phone1: Adress[0].mobile,
+                        pincode: Adress[0].pin,
+                        state: Adress[0].state,
+                        city: Adress[0].city,
+                        houseName: Adress[0].houseName,
+                        country: Adress[0].country,
+                        status: "pending",
+                        productReturned: 0,
+                    });
+            
+                   
+                    //save Orders in the database
+                   Orders.save(user)
+                        .then((data) => {console.log(data,"data==================");})
+                        .catch((err) => {
+                            console.log("catch=========");
+                            res.status(500).send({
+                                message:"some error,======",
+                            });
+                        });
+                        
+                    user.cart.items.map(async (val, i) => {
+                        let productId = val.productId;
+                        let qty = val.quantity;
+                        let price = val.offer;
+            
+                        Orders.products.item.push({ productId, qty, price });
+                    });
+            
+                     total = Orders.products.item.reduce((tot, val) => {
+                        return tot + val.price * val.qty;
+                    }, 0);
+            
+                    Orders.products.totalPrice = total;
+            
+                }
+            
+                if (paymentmethode == "Cash on delivery") {
+                    console.log("cash on delivery...........................");
+                    res.json({ payment: "Cash on delivery" });
+                } else {
+                    console.log("razor pay ..........................");
+                    const razorpay = new Razorpay({
+                        key_id: "rzp_test_zVBhrL4CVfIezv",
+                        key_secret: "HeU66JXIWNBWFHC1vnC6qB7X",
+                    });
+                    let toralPrice =  total*100
+             
+                    const amount = toralPrice; // Amount in paise (100 paise = 1 INR)
+                    const currency = "INR";
+                    console.log(amount,"amount=======");
+            
+                    const order = await razorpay.orders.create({
+                        amount: amount,
+                        currency: currency, 
+                        receipt: "order_12345", // Generate a unique order ID on your server
+                    });
+            
+                    res.json({ order});
+            }
+           
+            
+        }
+        catch(err)
+        {
+            console.log(err)
+        }
+     }
+
+     //  oderrSuccess
+
+    const oderrSuccess = async(req,res)=>
+    {
+        const userEmail = req.session.userData;
+        if(req.session.userData){
+        try
+        {
+            const userDetails = await userModel.findOne({ email: userEmail }); 
+            const user = true
+            const name =  userDetails.name
+            userDetails.cart.items = []
+            let cart =  userDetails.cart.items;
+        
+             await userDetails.save()
+            const cartCount = cart.length;
+            const wishlist = userDetails.wishlist.length;
+            res.render("user/oderSucess", {  user,userDetails ,wishlist,cartCount,cart,name});
+          
+        }
+    
+        catch(err)
+        {
+            console.log(err.message)
+        }
+    }
+        else{
+            res.redirect('/login')
+        }
+    
+    
+    }
+
 // Coupon
 const coupons = async (req, res) => {
 
@@ -1105,7 +1282,7 @@ const coupons = async (req, res) => {
     const userEmail = req.session.userData;
     if(req.session.userData){
     try {
-     
+       
         const couponCode = req.body.coupon;
         const TotalAmount = req.body.amount;
         const userDetails = await userModel.findOne({ email: userEmail });
@@ -1118,35 +1295,41 @@ const coupons = async (req, res) => {
         const expiryDate = couponValue.expiryDate;
 
         if (!couponValue) {
+            console.log("!coupon not valid");
             res.json({ message: 'Coupon Not Valid' });
+            
         } else if (couponValue) {
+            console.log("coupon valid");
             const userExist = couponValue.userId.includes(userDataId);
             if (!userExist) {
-              
+                   
+                       console.log(TotalAmount,couponValue.minValue);
                 if ( TotalAmount >= couponValue.minValue) {
+
                     
                     let amount = userDetails.total
                     let maxxValue = couponValue.maxValue 
                     let copvalue = Number(couponValue.couponValue)
                     let result = amount * copvalue / 100;
-                    let lowPrice;
+                    let lowPrice; 
                     if(result<=maxxValue)
                     {
+                        
                             let copvalue = Number(couponValue.couponValue)
-                            let result = amount * copvalue / 100;
+                            let result = (amount * copvalue)/ 100;
                              lowPrice = amount - result
-                            
-                    }else{
+                    }
+                    else{
                          lowPrice =  amount - maxxValue
-                       
                     }
                     userDetails.total=lowPrice;
                     await userDetails.save()
                     await couponModle.updateOne({ couponName: couponCode }, { $push: { userId: userDataId } });
                     res.json({ message: 'Coupon is succefully Added', coupon: couponValue,newPrice: lowPrice});
-
-                } else {
-                    res.json({ message: 'Coupon Expired', coupon: couponValue });
+                }
+                 else {
+                    console.log("coupon expired");
+                    res.json({ message: 'Coupon Not Valid', coupon: couponValue });
                 }
             } else {
                 res.json({ message: 'You Already Use This Coupon', coupon: couponValue });
@@ -1322,6 +1505,108 @@ const remove = async(req,res)=>
            
             res.status(500).send('Internal Server Error');
         } 
+} 
+// ORDER
+
+const order = async (req, res) => {
+    const userEmail = req.session.userData;
+    if(req.session.userData)
+    { 
+        try {
+           
+            const userDetails = await userModel.findOne({ email: userEmail });
+            const name = userDetails.name
+            const cart = userDetails.cart.items;
+            const cartCount = cart.length;
+            const wishlist = userDetails.wishlist.length
+            const userid = userDetails._id;
+            const order = await OrderModel.find({ userId: userid, orderReturnRequest: false, orderCancleRequest: false, status: { $ne: 'Deliverd' } }).sort({ _id: -1 });
+            const orderHist = await OrderModel.find({
+                userId: userid,
+                $or: [
+                    { orderCancleRequest: true },
+                    { status: 'Deliverd' }
+                ], orderReturnRequest: false,
+            }).sort({ _id: -1 });
+            const orderProducts = orderHist.map(data => data.products);
+            const orderProduct = orderProducts.flat();
+            const orderHistStatus = orderHist.map(data => data.orderCancleRequest);
+            const orderHista = orderHist.map(data => data.status);
+    
+    
+            const product = order.map(data => data.products);
+            const newProduct = product.flat();
+            const status = order.map(data => data.status);
+            const orderstatus = order.map(data => data.orderCancleRequest);
+            const Date = order.map(data => data.expectedDelivery.toLocaleDateString());
+            const user = true;
+            res.render('user/myOrder', {
+                title: "OrderPage",
+                userEmail,
+                newProduct,
+                status,
+                Date,
+                order,
+                orderstatus,
+                cartCount,
+                orderHist,
+                orderProduct,
+                orderHistStatus,
+                orderHista,
+                user,
+                name,
+                wishlist
+            });
+        } catch (error) {
+            console.log(error)
+        }
+    }
+  
+    else{
+            res.redirect('/login')
+        }
+    
+    
+}
+
+const orderView = async (req, res) => {
+
+    const userEmail = req.session.userData;
+    if(req.session.userData)
+    {
+        try {
+           
+            const userDetails = await userModel.findOne({ email: userEmail });
+            const cart = userDetails.cart.items;
+            const cartCount = cart.length;
+            const wishlist = userDetails.wishlist.length
+            const orderId = req.query.id;
+            const order = await OrderModel.find({ _id: orderId });;
+            const orderProducts = order.map(items => items.proCartDetail).flat();
+            const cartProducts = order.map(items => items.cartProduct).flat();
+            for (let i = 0; i < orderProducts.length; i++) {
+                const orderProductId = orderProducts[i]._id;
+                const matchingCartProduct = cartProducts.find(cartProduct => cartProduct.productId.toString() === orderProductId.toString());
+    
+                if (matchingCartProduct) {
+                    orderProducts[i].cartProduct = matchingCartProduct;
+                }
+            }
+            const address = userDetails.address.find(items => items._id.toString() == order.map(items => items.address).toString());
+            const subTotal = cartProducts.reduce((totals, items) => totals + items.realPrice, 0);
+            const [orderCanceld] = order.map(item => item.orderCancleRequest);
+            const orderStatus = order.map(item => item.status);
+            const user = true;
+            res.render("user/orderStatus", { title: "Product view", user, cartCount, order, orderProducts, subTotal, address, orderCanceld, orderStatus, wishlist,user })
+        }
+         catch (error) {
+            console.log(error)
+        }
+    } 
+    else{
+          res.redirect('/login')
+        }
+
 }
 
 module.exports = { 
@@ -1339,7 +1624,7 @@ module.exports = {
     resetPassword,
     newPassword,
     productView,
-    loadcart,
+    loadcart, 
     AddCart,
     cartQuantityUpdate,
     addingWishList,
@@ -1359,6 +1644,12 @@ module.exports = {
     sortfind,
     filterfind,
     poductpagin,
-    coupons
+    coupons,
+    order,
+    orderView,
+    oderAvailable,
+    odderSuccsspost,
+    oderrSuccess,
+ 
 }
 

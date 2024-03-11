@@ -472,9 +472,9 @@ const productDelete= async(req,res)=>
 const couponsList = async (req, res) => {
     try 
     {
-     
+        const admin = req.session.admin
         const couponData = await couponModel.find();
-        res.render('admin/coupon', {  couponData })
+        res.render('admin/coupon', { admin,couponData })
     
 
     } catch (error) {
@@ -484,8 +484,9 @@ const couponsList = async (req, res) => {
 }
 const couponsAdding = async (req, res) => {
     try {
+        const admin = req.session.admin;
         const couponData = await couponModel.find({ isList: true });
-        res.render('admin/couponAdding', { title: "coupon",couponData});
+        res.render('admin/couponAdding', { title: "coupon",couponData,admin});
     } catch (error) {
         console.log("couponAddingPage Rendering Error");
         res.status(500).send("couponAddingPage Rendering Error");

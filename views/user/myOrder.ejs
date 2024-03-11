@@ -1,0 +1,90 @@
+
+<%- include('../partials/userheader.ejs')%>
+<%- include('../layouts.ejs')%>
+
+
+<div class="container  p-2 m-0 mb-2">
+
+    <%if(newProduct.length>0){%>
+        <div class="Cart_list">
+            <div class="px-2">
+                <table style="width:100%;">
+                    <thead class="cartTop" style="position:sticky; top: 0; z-index: 1;">
+                        <tr class="cart_table">
+                            <th class="first p-3 px-4"><span>ID</span></th>
+                            <th class="p-3"><span>Product</span></th>
+                            <th class="p-3"><span>Status</span></th>
+                            <th class="p-3"><span>Quantity</span></th>
+                            <th class="p-3"><span>Price</span></th>
+                            <th class="p-3"><span>Expected Date</span></th>
+                            <th class="third p-3"><span>Order</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% order.forEach((data,index)=>{ %>
+                            <tr class="mt-2">
+                                <th scope="col" class="px-4"
+                                    style="font-size: 13px; color:#959595">
+                                    <%= index+1 %>
+                                </th>
+                                <th scope="col " class="t_Image px-3"
+                                    style="width: 40px; height: 20px;">
+                                    <img src="/productImages/<%=data.products[0].image[0] %>"
+                                        alt="" width="60px">
+                                </th>
+                                <td scope="col" class="px-3">
+                                    <%if(data.status == "Processing"){%>
+                                    <span class=" badge rounded-pill bg-warning">
+                                        <%= data.status%>
+                                    </span>
+                                    <%}else{%>
+                                        <span class=" badge rounded-pill bg-info">
+                                            <%= data.status%>
+                                        </span>
+                                    <%}%>
+                                </td>
+                                <td scope="col" class="tablefont px-3">
+                                    <span class="couponListFont" style="color:#959595">
+                                        <%= data.products.length%>
+                                    </span>
+                                </td>
+                                <td scope="col" class="px-3">
+                                    <span class="couponListFont"
+                                        style="color:#959595">₹<span>&nbsp;</span>
+                                        <%= data.payment.amount%>
+                                    </span>
+                                </td>
+                                <td scope="col" class="px-3">
+                                    <span class="couponListFont fw-bold"
+                                        style="font-size: 14px;color:#959595">
+                                        <%= Date[index]%>
+                                    </span>
+                                </td>
+                                <td scope="col"
+                                    class="TableButton d-flex align-items-center py-5 d-flex flex-column gap-2">
+                                    <form action="/profile/orderStatus/<%=data._id%>" method="post" onsubmit="return ">
+                                        <button class="btn btn-success text" style="font-size: 11px;"type="submit">
+                                            View
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            <%})%>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <%}else{%>
+            <div class="d-flex align-items-center justify-content-center">
+                <lottie-player
+                    src="https://assets10.lottiefiles.com/packages/lf20_3VDN1k.json"
+                    background="transparent" speed="5"
+                    style="width: 300px; height: 300px; opacity: 80%;" loop autoplay>
+                </lottie-player>
+            </div>
+    <%}%>
+</div>
+
+
+
+<%- include('../partials/userfooter.ejs') %>
