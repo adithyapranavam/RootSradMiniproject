@@ -5,6 +5,7 @@ const categoryCollection = require("../model/categorymodel");
 const productCollection = require('../model/productmodel');
 const couponModel = require('../model/coupon');
 const bannerModel = require('../model/banner');
+const Ordersdb = require('../model/ordernew')
 const fs = require('fs')
 //MULTER
 const multer = require('../middleware/multer');
@@ -556,6 +557,24 @@ const getCouponDelete= async(req,res)=>
 
     }
 }
+// oder
+
+const oderDetails = async (req, res) => {
+    try
+    {
+        let arr = [];
+        const orders = await Ordersdb.find({});
+        const product = await productCollection.find({});
+    
+        res.render("admin/oderDetails", { orders, product,arr });
+    }
+    catch(err)
+    {
+      console.log(err);
+    }
+    
+};
+
 const banner = async(req,res)=>
 {
 
@@ -643,5 +662,6 @@ module.exports =
     banner,
     bannerAdding,
     bannerPost,
-    removeBanner
+    removeBanner,
+    oderDetails
 } 

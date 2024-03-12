@@ -1,6 +1,7 @@
 const userModel = require('../model/usermodel')
 const product = require('../model/productmodel')
 const couponModle = require('../model/coupon');
+const Ordersdb = require('../model/ordernew')
 const bcrypt = require('bcrypt');
 const fast2sms = require('fast-two-sms');  
 const OTP = require('../model/otpmodel');  
@@ -34,10 +35,12 @@ const profile = async(req,res)=>
             let cart = userData.cart.items;
             let cartCount = cart.length;
             const wishlist = userData.wishlist.length
+            const orders = await Ordersdb.find({})
+            const data = await product.find({}); 
             const name = userData.name;
             const user = true
             const userDatas = await userModel.findOne({ email: FoundUser });
-            res.render('user/profile', { user,userDatas,userData, cartCount ,name,wishlist});
+            res.render('user/profile', { user,userDatas,userData, cartCount ,name,wishlist,orders,product:data});
             }else{
                 res.redirect('/')
             }

@@ -1274,7 +1274,30 @@ const Checkout = async (req, res) => {
     
     
     }
-
+    const orderStatus = async (req, res) => {
+        console.log("profile");
+        odderId = req.query.id;
+        let val = {
+            v: 1,
+        };
+        let ret = false; 
+        let cancel = false;
+    
+        const orders = await Ordersdb.findById({ _id: odderId });
+        if (orders.status == "delivered") {
+            ret = true;
+        }
+        if (orders.status == "order confirmed" || orders.status == "shipped") {
+            cancel = true;
+        }
+    
+        const products = await product.find({});
+        let user = await userModel.findById({ _id: req.session.isAvailable });
+        let Totalwish = user.wishlist.item.length;
+        let Totalcart = user.cart.items.length;
+    
+        res.render("orderStatus", { test: val, orders, products, ret, cancel ,Totalwish ,Totalcart });
+    };
 // Coupon
 const coupons = async (req, res) => {
 
@@ -1506,108 +1529,108 @@ const remove = async(req,res)=>
             res.status(500).send('Internal Server Error');
         } 
 } 
-// ORDER
+// ORDER 
 
-const order = async (req, res) => {
-    const userEmail = req.session.userData;
-    if(req.session.userData)
-    { 
-        try {
+// const order = async (req, res) => {
+//     const userEmail = req.session.userData;
+//     if(req.session.userData)
+//     { 
+//         try {
            
-            const userDetails = await userModel.findOne({ email: userEmail });
-            const name = userDetails.name
-            const cart = userDetails.cart.items;
-            const cartCount = cart.length;
-            const wishlist = userDetails.wishlist.length
-            const userid = userDetails._id;
-            const order = await OrderModel.find({ userId: userid, orderReturnRequest: false, orderCancleRequest: false, status: { $ne: 'Deliverd' } }).sort({ _id: -1 });
-            const orderHist = await OrderModel.find({
-                userId: userid,
-                $or: [
-                    { orderCancleRequest: true },
-                    { status: 'Deliverd' }
-                ], orderReturnRequest: false,
-            }).sort({ _id: -1 });
-            const orderProducts = orderHist.map(data => data.products);
-            const orderProduct = orderProducts.flat();
-            const orderHistStatus = orderHist.map(data => data.orderCancleRequest);
-            const orderHista = orderHist.map(data => data.status);
+//             const userDetails = await userModel.findOne({ email: userEmail });
+//             const name = userDetails.name
+//             const cart = userDetails.cart.items;
+//             const cartCount = cart.length;
+//             const wishlist = userDetails.wishlist.length
+//             const userid = userDetails._id;
+//             const order = await Ordersdb.find({ userId: userid, orderReturnRequest: false, orderCancleRequest: false, status: { $ne: 'Deliverd' } }).sort({ _id: -1 });
+//             const orderHist = await Ordersdb.find({
+//                 userId: userid,
+//                 $or: [
+//                     { orderCancleRequest: true },
+//                     { status: 'Deliverd' }
+//                 ], orderReturnRequest: false,
+//             }).sort({ _id: -1 });
+//             const orderProducts = orderHist.map(data => data.products);
+//             const orderProduct = orderProducts.flat();
+//             const orderHistStatus = orderHist.map(data => data.orderCancleRequest);
+//             const orderHista = orderHist.map(data => data.status);
     
     
-            const product = order.map(data => data.products);
-            const newProduct = product.flat();
-            const status = order.map(data => data.status);
-            const orderstatus = order.map(data => data.orderCancleRequest);
-            const Date = order.map(data => data.expectedDelivery.toLocaleDateString());
-            const user = true;
-            res.render('user/myOrder', {
-                title: "OrderPage",
-                userEmail,
-                newProduct,
-                status,
-                Date,
-                order,
-                orderstatus,
-                cartCount,
-                orderHist,
-                orderProduct,
-                orderHistStatus,
-                orderHista,
-                user,
-                name,
-                wishlist
-            });
-        } catch (error) {
-            console.log(error)
-        }
-    }
+//             const product = order.map(data => data.products);
+//             const newProduct = product.flat();
+//             const status = order.map(data => data.status);
+//             const orderstatus = order.map(data => data.orderCancleRequest);
+//             const Date = order.map(data => data.expectedDelivery.toLocaleDateString());
+//             const user = true;
+//             res.render('user/myOrder', {
+//                 title: "OrderPage",
+//                 userEmail,
+//                 newProduct,
+//                 status,
+//                 Date,
+//                 order,
+//                 orderstatus,
+//                 cartCount,
+//                 orderHist,
+//                 orderProduct,
+//                 orderHistStatus,
+//                 orderHista,
+//                 user,
+//                 name,
+//                 wishlist
+//             });
+//         } catch (error) {
+//             console.log(error)
+//         }
+//     }
   
-    else{
-            res.redirect('/login')
-        }
+//     else{
+//             res.redirect('/login')
+//         }
     
     
-}
+// }
 
-const orderView = async (req, res) => {
+// const orderView = async (req, res) => {
 
-    const userEmail = req.session.userData;
-    if(req.session.userData)
-    {
-        try {
+//     const userEmail = req.session.userData;
+//     if(req.session.userData)
+//     {
+//         try {
            
-            const userDetails = await userModel.findOne({ email: userEmail });
-            const cart = userDetails.cart.items;
-            const cartCount = cart.length;
-            const wishlist = userDetails.wishlist.length
-            const orderId = req.query.id;
-            const order = await OrderModel.find({ _id: orderId });;
-            const orderProducts = order.map(items => items.proCartDetail).flat();
-            const cartProducts = order.map(items => items.cartProduct).flat();
-            for (let i = 0; i < orderProducts.length; i++) {
-                const orderProductId = orderProducts[i]._id;
-                const matchingCartProduct = cartProducts.find(cartProduct => cartProduct.productId.toString() === orderProductId.toString());
+//             const userDetails = await userModel.findOne({ email: userEmail });
+//             const cart = userDetails.cart.items;
+//             const cartCount = cart.length;
+//             const wishlist = userDetails.wishlist.length
+//             const orderId = req.query.id;
+//             const order = await Ordersdb .find({ _id: orderId });;
+//             const orderProducts = order.map(items => items.proCartDetail).flat();
+//             const cartProducts = order.map(items => items.cartProduct).flat();
+//             for (let i = 0; i < orderProducts.length; i++) {
+//                 const orderProductId = orderProducts[i]._id;
+//                 const matchingCartProduct = cartProducts.find(cartProduct => cartProduct.productId.toString() === orderProductId.toString());
     
-                if (matchingCartProduct) {
-                    orderProducts[i].cartProduct = matchingCartProduct;
-                }
-            }
-            const address = userDetails.address.find(items => items._id.toString() == order.map(items => items.address).toString());
-            const subTotal = cartProducts.reduce((totals, items) => totals + items.realPrice, 0);
-            const [orderCanceld] = order.map(item => item.orderCancleRequest);
-            const orderStatus = order.map(item => item.status);
-            const user = true;
-            res.render("user/orderStatus", { title: "Product view", user, cartCount, order, orderProducts, subTotal, address, orderCanceld, orderStatus, wishlist,user })
-        }
-         catch (error) {
-            console.log(error)
-        }
-    } 
-    else{
-          res.redirect('/login')
-        }
+//                 if (matchingCartProduct) {
+//                     orderProducts[i].cartProduct = matchingCartProduct;
+//                 }
+//             }
+//             const address = userDetails.address.find(items => items._id.toString() == order.map(items => items.address).toString());
+//             const subTotal = cartProducts.reduce((totals, items) => totals + items.realPrice, 0);
+//             const [orderCanceld] = order.map(item => item.orderCancleRequest);
+//             const orderStatus = order.map(item => item.status);
+//             const user = true;
+//             res.render("user/orderStatus", { title: "Product view", user, cartCount, order, orderProducts, subTotal, address, orderCanceld, orderStatus, wishlist,user })
+//         }
+//          catch (error) {
+//             console.log(error)
+//         }
+//     } 
+//     else{
+//           res.redirect('/login')
+//         }
 
-}
+// }
 
 module.exports = { 
     home, 
@@ -1645,11 +1668,12 @@ module.exports = {
     filterfind,
     poductpagin,
     coupons,
-    order,
-    orderView,
+    // order,
+    // orderView,
     oderAvailable,
     odderSuccsspost,
     oderrSuccess,
+    orderStatus
  
 }
 

@@ -50,6 +50,8 @@ admin.get('/editCoupon',adminController. editCoupon )
 admin.post('/editCoupon',adminController.postEditCoupon)
 admin.get('/deleteCoupon',adminController.getCouponDelete)
 
+//ODERS
+ admin.get('/oderDetails',adminController.oderDetails)
 
 // BANNERS
 admin.get('/banner',adminController.banner)

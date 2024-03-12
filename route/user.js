@@ -50,8 +50,7 @@ Router.get('/wishlist/:id',userController.WhishProductDelete)
 Router.get('/CheckOutPage',userController.Checkout)
 Router.post('/AddressUpdate',userController.addressAdding)
 Router.get('/address',userController.getAddress)
-Router.post('/odder/successpost/Check',userController.oderAvailable)
-Router.post('/oddersuccesspost',userController.odderSuccsspost)
+
 
 Router.get('/profile',profileController.profile)
 Router.post('/addaddresscheckout',userController.toAddAddressCheckout)
@@ -63,9 +62,13 @@ Router.get('/deleteAddress',userController.remove)
 Router.post('/coupons/couponValidation',userController.coupons)
 
 // order
-Router.get('/order',userController.order)
-Router.get('/orderView',userController.orderView)
+// Router.get('/order',userController.order)
+// Router.get('/orderView',userController.orderView)
+
+Router.post('/odder/successpost/Check',userController.oderAvailable)
+Router.post('/oddersuccesspost',userController.odderSuccsspost)
 Router.get('/oderSucess',userController.oderrSuccess)
+Router.get("/orderStatus", userController.orderStatus);
 // success
 Router.get('/success', userController.successTick);
 
