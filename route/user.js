@@ -61,14 +61,14 @@ Router.get('/deleteAddress',userController.remove)
 // COUPON
 Router.post('/coupons/couponValidation',userController.coupons)
 
-// order
-// Router.get('/order',userController.order)
-// Router.get('/orderView',userController.orderView)
+
 
 Router.post('/odder/successpost/Check',userController.oderAvailable)
 Router.post('/oddersuccesspost',userController.odderSuccsspost)
 Router.get('/oderSucess',userController.oderrSuccess)
-Router.get("/orderStatus", userController.orderStatus);
+Router.get('/orderStatus', userController.orderStatus);
+Router.put("/return/reason", userController.return_reason);
+Router.post("/odder/cancel", userController.odder_cancel);
 // success
 Router.get('/success', userController.successTick);
 

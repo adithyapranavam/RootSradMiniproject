@@ -1,0 +1,144 @@
+
+
+<%- include('../partials/userheader.ejs')%>
+<%- include('../layouts.ejs')%>
+
+<h3 style="text-align: center;">Odder Details</h3><!-- End .card-title -->
+														<div class="container" style="border: solid 2px; ">
+															<div style=" display: flex;">
+															<div style=" width: 30%; display: flex; flex-direction: column;">
+														 <% for(var i=0;i<orders.products.item.length;i++){%>
+
+															<div style="width: 100%; height: 100%; display: flex; margin-top: 15px;padding-left: 50px;">
+																
+																
+																<% for(var j=0;j<product.length;j++){%>
+																	<% if(product[j]._id.toString()  ==  orders.products.item[i].productId.toString()){ %> 
+																<div style="display: flex; ">
+																	<div style="margin-right: 30px; width: 100px;">
+																	<div style="width: 60px; width: 60px;"><img src="/productImages/<%= product[j].image[0] %>" alt=""></div>
+																	<div><%= product[j].name %></div>
+																	</div>
+																	<div style="display: flex; align-items: center;">
+																		<%= orders.products.item[i].qty %>
+																	</div>
+																	<div style="display: flex; align-items: center; margin-left: 30px;">
+																		<%=  product[j].price  %>
+																	</div>
+																	<!-- <div style="display: flex; align-items: center; justify-content: center;">
+																		<span>Total : </span>
+																	</div> -->
+																</div>
+																<% }%>
+																
+																<% }%>
+																
+																
+															</div>
+															
+															<% }%>
+															<input type="hidden" value="<%= orders._id %>" id="idvalue">
+														</div>
+														<div style=" width: 70%;">
+															<div style=" height: 50%; display: flex; justify-content: space-between; padding-top: 30px; padding-left: 20px; padding-right: 20px; margin-bottom: 10px;">
+															<h4>Total : <%= orders.products.totalPrice %></h4>
+															<% if(cancel==true) { %>
+															<a href="#"><span style="padding: 10px;
+																display: inline;
+																border-radius: 2px;
+																border: 0;
+																margin: 0 10px;
+																background: red;
+																font-size: 15px;
+																line-height: 15px;
+																color: white;
+																width: auto;
+																height: auto;
+																box-sizing: content-box;" onclick="cancel()">cancel</span></a>
+																<%}%>
+															</div>
+															<div style=" height: 50%;">
+																<div style="display: flex;">
+																<% if(ret==true) { %>
+																
+																	<div>
+																		<a href="#"><span style="padding: 5px;
+																			
+																			display: inline;
+																			border-radius: 2px;
+																			border: 0;
+																			margin: 0 10px;
+																			background: rgb(94, 255, 0);
+																			font-size: 15px;
+																			line-height: 15px;
+																			color: white;
+																			width: auto;
+																			height: auto;
+																			box-sizing: content-box;"
+																			onclick="reason()">Return</span></a>
+																	</div>
+																<%}%>
+															    
+																<select name="" id="returnSelect">
+																	<option value="">Select Reason</option>
+																	<option value="product damage">product damage</option>
+																	<option value="Dont't like color">Dont't like color</option>
+																	<option value="Alredy bought">Alredy bought</option>
+																	<option value="Order delayed">Order delayed</option>
+																</select>
+																</div>
+															</div>
+														</div>
+														
+														</div>
+														</div>
+														<!-- <script src="javascript/script.js" defer></script> -->
+
+        		<script>
+		
+		let returnSelect = document.getElementById("returnSelect")
+		returnSelect.style.display = "none";
+		let idvalue = document.getElementById("idvalue").value
+
+		function reason(){
+			returnSelect.style.display = "block"
+		}
+		returnSelect.addEventListener("change",(event)=>{
+			
+			fetch('/return/reason', {
+                method: 'put',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ value: event.target.value,id:idvalue })
+            })
+            .then(response => {
+                console.log('PUT request sent');
+            })
+            .catch(error => {
+                console.error('Error sending PUT request:', error);
+            });
+			
+		})
+
+		function cancel(){
+			fetch('/odder/cancel', {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({id:idvalue })
+            })
+            .then(response => {
+                console.log('PUT request sent');
+            })
+			.then(res=>{window.location.reload()})
+            .catch(error => {
+                console.error('Error sending PUT request:', error);
+            });
+
+		}
+		</script>
+		
+
+        <%- include('../partials/userfooter.ejs') %>

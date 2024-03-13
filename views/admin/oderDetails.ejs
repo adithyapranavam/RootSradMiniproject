@@ -133,7 +133,7 @@
 
                                 <% if(j==0){ %>
                                 <td>
-                                <select order-id="<%= orders[i]._id %>">
+                                <select order-id="<%= orders[i]._id %>" class="orderStatusChange">
                                     <option value="options"style="background-color: transparent;" >Select..</option>
                                     <option value="order confirmed" style="background-color: transparent;" >order confirmed</option>
                                     <option value="shipped"style="background-color: transparent;"  >shipped</option>
@@ -200,7 +200,7 @@
           
 
          arr.forEach((element,index)=>{
-          changeArr = ['','order confirmed','shipped','delivered','returned']
+          changeArr = ['select','order confirmed','shipped','delivered','returned']
           const orderStatus = element.innerHTML
           const status = changeArr.indexOf(orderStatus)
           if (status>=0){

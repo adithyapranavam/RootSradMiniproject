@@ -562,7 +562,7 @@ const getCouponDelete= async(req,res)=>
 const oderDetails = async (req, res) => {
     try
     {
-        let arr = [];
+        let arr = []; 
         const orders = await Ordersdb.find({});
         const product = await productCollection.find({});
     
@@ -574,6 +574,26 @@ const oderDetails = async (req, res) => {
     }
     
 };
+const status_change = async (req, res) => { 
+    try
+    {
+        console.log("dfghjfvgh"); 
+    const odstatus = req.body.value;
+
+    const idnum = req.body.idvalue;
+
+    const orders = await Ordersdb.findByIdAndUpdate({ _id: idnum }, { status: odstatus });
+
+    await orders.save();
+
+    console.log(req.body.value);
+    res.json(orders);
+  }
+  catch(err)
+  {
+  console.log(err);
+  }
+}
 
 const banner = async(req,res)=>
 {
@@ -663,5 +683,6 @@ module.exports =
     bannerAdding,
     bannerPost,
     removeBanner,
-    oderDetails
+    oderDetails,
+    status_change
 } 

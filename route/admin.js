@@ -52,6 +52,7 @@ admin.get('/deleteCoupon',adminController.getCouponDelete)
 
 //ODERS
  admin.get('/oderDetails',adminController.oderDetails)
+ admin.put('/status/change', adminController.status_change);
 
 // BANNERS
 admin.get('/banner',adminController.banner)
