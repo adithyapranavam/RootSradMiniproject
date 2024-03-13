@@ -6,7 +6,10 @@ const productCollection = require('../model/productmodel');
 const couponModel = require('../model/coupon');
 const bannerModel = require('../model/banner');
 const Ordersdb = require('../model/ordernew')
+const Salesdb = require('../model/salesdb')
 const fs = require('fs')
+const PDFDocument = require("pdfkit");
+
 //MULTER
 const multer = require('../middleware/multer');
 
@@ -595,6 +598,81 @@ const status_change = async (req, res) => {
   }
 }
 
+const graph_data = async (req, res) => {
+
+    if (req.query.id === "full"){
+        const orderdata = await Ordersdb.find();
+
+        const totalDelivery = orderdata.filter((data) => data.status === "delivered");
+        const totalCancelled = orderdata.filter((data) => data.status === "cancel");
+        const totalReturn = orderdata.filter((data) => data.status === "returned");
+
+        const chartdata = [
+            { label: "Delivered", value: totalDelivery.length },
+            { label: "cancel", value: totalCancelled.length },
+            { label: "returned", value: totalReturn.length },
+        ];
+        console.log("chartdata",chartdata);
+        res.json(chartdata);
+}
+};
+ 
+const pdf_downloard =  async(req,res)=>
+{
+    console.log("pdf download started............");
+    try
+    {
+
+        let year = 2024
+
+        const getSalesDataByYear = async (year) => 
+        {
+            
+                const salesData = await Salesdb.aggregate([
+                    {
+                        $match: {
+                            $expr: {
+                                $eq: [{ $year: "$createdAt" }, year],
+                            },
+                        },
+                    },
+                ]).then((data) => {
+                    console.log("then start......")
+                    console.log(data)
+                    // Generate the PDF start
+                    const doc = new PDFDocument();
+                    doc.pipe(fs.createWriteStream("report.pdf"));
+
+                    // Add content to the PDF
+                    doc.fontSize(12).text("Report ", { align: "center" });
+                    doc.text("--------------------------");
+
+                    data.forEach((document) => {
+                        doc.text(`Product: ${document.productNames}`);
+                        doc.text(`Category: ${document.category}`);
+                        doc.text(`Quantity: ${document.quantity}`);
+                        
+                        doc.text("--------------------------");
+                    });
+
+                    // Stream the PDF to the response
+                    const filename = "report.pdf";
+                    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+                    res.setHeader("Content-Type", "application/pdf");
+                    doc.pipe(res);
+                    doc.end();
+                    console.log("PDF report generated successfully.");
+
+                    // Generate the PDF end
+                });
+            } 
+            getSalesDataByYear(year)
+    }
+    catch(err)
+    {
+        console.log(err);
+    }
+}
 const banner = async(req,res)=>
 {
 
@@ -684,5 +762,7 @@ module.exports =
     bannerPost,
     removeBanner,
     oderDetails,
-    status_change
+    status_change,
+    graph_data,
+    pdf_downloard
 } 

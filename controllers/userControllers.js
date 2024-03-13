@@ -5,6 +5,7 @@ const categoryCollection = require("../model/categorymodel");
 const bannerModel = require('../model/banner');
 const OrderModel = require('../model/order');
 const Ordersdb = require('../model/ordernew')
+const Salesdb = require('../model/salesdb')
 const bcrypt = require('bcrypt');
 const fast2sms = require('fast-two-sms'); 
 const Razorpay = require('razorpay'); 
@@ -1165,6 +1166,33 @@ const Checkout = async (req, res) => {
                         products.quantity = prs - pri;
                         products.save();
                     });
+// Salesdb
+user.cart.items.map(async (val, i) => {
+    let prid = val.productId;
+
+    const data = await product.findById({ _id: prid });
+
+    let prs = data.quantity;
+
+    let pri = val.quantity;
+console.log(prs,pri,data.name,data.category,val.quantity);
+    const Sales = new Salesdb({ 
+        productNames: data.name,
+        category: data.category,
+        quantity: val.quantity
+        
+    });
+
+    //save Orders in the database
+    Sales.save(user)
+        .then((data) => {})
+        .catch((err) => {
+            console.log("inside the catch........");
+            res.status(500).send({
+                message: err.message || "some error",
+            });
+       });
+    }); 
 
                     const Adress = user.address.filter((data)=>data._id==addressid)
                     console.log(Adress,"address");
@@ -1360,7 +1388,7 @@ const odder_cancel = async (req, res) => {
     Orders.save();
     console.log(Orders);
     res.json(Orders);
-}
+} 
     
 catch(err)
 {

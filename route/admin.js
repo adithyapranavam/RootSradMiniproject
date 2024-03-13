@@ -60,5 +60,8 @@ admin.get('/bannerAdding',adminController.bannerAdding)
 admin.post('/banner',multer.upload.array('image'),adminController.bannerPost)
 admin.get('/removeBanner',adminController.removeBanner)
 
-
+// GRAPH
+admin.post("/graph/data", adminController.graph_data);
+// pdf
+admin.post("/pdf/downloard", adminController.pdf_downloard);
 module.exports = admin;

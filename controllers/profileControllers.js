@@ -35,7 +35,7 @@ const profile = async(req,res)=>
             let cart = userData.cart.items;
             let cartCount = cart.length;
             const wishlist = userData.wishlist.length
-            const orders = await Ordersdb.find({})
+            const orders = await Ordersdb.find({userId:userData._id})
             const data = await product.find({}); 
             const name = userData.name;
             const user = true
