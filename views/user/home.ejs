@@ -72,8 +72,12 @@
                             <h3 class="product-title"><a href="product.html"><%=data.name %></a></h3>
 
                             <div class="product-price">
-                                <span class="new-price">₹ <%= data.price %></span>
+                                <% if (data.quantity <= 0) { %>
+                                    <span class="new-price">Out of Stock</span>
+                                <% } else { %>
+                                    <span class="new-price">₹ <%= data.price %></span>
                                 <span class="old-price" style="text-decoration: line-through;">₹ <%= data.orginalprice %></span>
+                                <% } %>
                             </div>
                            
                             <div class="rating d-flex align-items-center">

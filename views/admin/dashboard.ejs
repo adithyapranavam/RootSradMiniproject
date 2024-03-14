@@ -129,7 +129,7 @@
     </div>
  </div>  
 	  
- <button onclick="pdfdownloard()" style="margin-left: 25px;" type="button" class="btn btn-info" id="pdfbtn" >Generate PDF</button>
+ <button onclick="pdfdownloard()" style="margin-left: 25px;" type="button" class="btn btn-info" id="pdfbtn" >Sales Report</button>
 
  <div class="row" style="margin-top: 100px;padding: 0 300px;">
   <canvas id="myChart" style=" margin-bottom: 50px;">
@@ -223,12 +223,6 @@
   
   function pdfdownloard(){
 
-console.log("start");
-console.log(fetchcustomDate)
-console.log("end");
-console.log(fetchYear+"fetchYear........")
-console.log(fetchDataMonth+"fetchDataMonth........");
-console.log(moderes,"modeee....")
 
 
   fetch("/admin/pdf/downloard", {

@@ -1161,8 +1161,8 @@ const Checkout = async (req, res) => {
                         let prs = products.quantity;
             
                         let pri = val.quantity;
-                        
-            
+                         
+             
                         products.quantity = prs - pri;
                         products.save();
                     });

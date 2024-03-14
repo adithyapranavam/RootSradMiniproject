@@ -77,32 +77,34 @@
                             </div>
 
                             <div class="product-details-action">
-                                <%if(user){%>
-                                    <form action="" method="post" id="CartForm" style="margin-right: 10;">
-                                        <input type="hidden" value="<%= data._id%>" id="cartProductId">
-                                       <button class="btn-product btn-cart add-to-cart"><span>Add to Cart</span></button>
+                                <% if (data.quantity <= 0) { %>
+                                    <form action="" method="post" id="OutOfStockForm" style="margin-right: 10;">
+                                        <input type="hidden" value="<%= data._id %>" id="outOfStockProductId">
+                                        <button class="btn btn-lg text-dark btn-outline-primary-2 disabled" disabled><span>Out of stock</span></button>
                                     </form>
-                                  
-                                    <form action="" method="get" id="WhishList">
-                                        <input type="hidden" value="<%= data._id%>" id="whishlistProductId">
-                                       <button class="btn-product btn-cart add-to-cart btn-wishlist"><span>Add to Wishlist</span></button>
-                                    </form>
-
-                                    <%} else {%>
-                                        <form action="/login" method="get" id="CartForm" style="margin-right:10">
-                                            <input type="hidden" value="<%= data._id%>" id="cartProductId">
-                                        <button  onclick="list(this.form)" class="btn-product btn-cart add-to-cart">
-                                            <span>Add to Cart</span>
-                                        </button>
+                                <% } else { %>
+                                    <% if (user) { %>
+                                        <form action="" method="post" id="CartForm" style="margin-right: 10;">
+                                            <input type="hidden" value="<%= data._id %>" id="cartProductId">
+                                            <button class="btn-product btn-cart add-to-cart"><span>Add to Cart</span></button>
                                         </form>
-                                      
-                                        <form action="/login" method="get" id="WhishList">
-                                            <input type="hidden" value="<%= data._id%>" id="cartProductId">
-                                           <button  onclick="list(this.form)" class="btn-product btn-cart add-to-cart btn-wishlist"><span>Add to Wishlist</span></button>
+                                
+                                        <form action="" method="get" id="WhishList">
+                                            <input type="hidden" value="<%= data._id %>" id="whishlistProductId">
+                                            <button class="btn-product btn-cart add-to-cart btn-wishlist"><span>Add to Wishlist</span></button>
                                         </form>
-
-                                    <%}%>
-
+                                    <% } else { %>
+                                        <form action="/login" method="get" style="margin-right:10">
+                                            <input type="hidden" value="<%= data._id %>" id="cartProductId">
+                                            <button onclick="list(this.form)" class="btn-product btn-cart add-to-cart"><span>Add to Cart</span></button>
+                                        </form>
+                                
+                                        <form action="/login" method="get">
+                                            <input type="hidden" value="<%= data._id %>" id="cartProductId">
+                                            <button onclick="list(this.form)" class="btn-product btn-cart add-to-cart btn-wishlist"><span>Add to Wishlist</span></button>
+                                        </form>
+                                    <% } %>
+                                <% } %>
                             </div>
                             <p id="CartSuccMsg"></p>
                             <div class="pt-3">
