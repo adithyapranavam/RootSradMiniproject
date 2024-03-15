@@ -122,66 +122,7 @@
                         </li>
                     </ul>
                 </nav>
-                    <!-- <nav aria-label="Page navigation example border  ">
-                        <ul class="pagination d-flex justify-content-center ">
-                            <li class="page-item">
-                            
-
-                                   
-                                        <a class="page-link" href=""Previous>
-                                            <span aria-hidden="true">&laquo;</span>
-                                            <span class="sr-only">Previous</span>
-                                        </a>
-                                     
-
-                            </li>
-
-                         
-                                    <li class="page-item  border border-5 bg-primary "><a class="page-link text-white" href="">
-                                       
-                                    </a></li>
-                              
-                                <li class="page-item  border border-5 "><a class="page-link" href="">
-                                   
-                                </a></li>
-                            
-                                    <li class="page-item">
-                                                <a class="page-link" href=""
-                                                    aria-label="Next">
-                                                    <span aria-hidden="true">&raquo;</span>
-                                                    <span class="sr-only">Next</span>
-                                                </a>
-                                    </li>
-                        </ul>
-                    </nav> -->
-                 
-                    <!-- <nav aria-label="Page navigation example border  ">
-                        <ul class="pagination d-flex justify-content-center ">
-                            <li class="page-item">
-                                        <a class="page-link" href="" aria-label="Previous">
-                                            <span aria-hidden="true">&laquo;</span>
-                                            <span class="sr-only">Previous</span>
-                                        </a>
-                            </li>
-
-                                    <li class="page-item  border border-5 bg-primary "><a class="page-link text-white" href="">
-                                       
-                                    </a></li>
-                              
-                                <li class="page-item  border border-5 "><a class="page-link" href="">
-                                  
-                                </a></li>
-                                    <li class="page-item">
-                                                <a class="page-link" href=""
-                                                    aria-label="Next">
-                                                    <span aria-hidden="true">&raquo;</span>
-                                                    <span class="sr-only">Next</span>
-                                                </a>
-                                    </li>
-
-                        </ul>
-
-                    </nav> -->
+                    
                     
 
                 
@@ -610,6 +551,34 @@ data.forEach((element) => {
     productdiv.innerHTML += item;
 });
 }
+function productsearch(){        
+        
+        const value = document.getElementById("searchValue").value
+
+        fetch("/poduct/search", {
+                method: "post",
+                headers: {
+                    "Content-Type": "application/json",
+                    // Add any other headers here if needed
+                },
+                body: JSON.stringify({ va: value }),
+            })
+                .then((response) => {
+                    console.log("5....");
+                    const result = response.json();
+                    // console.log(result);
+                    return result;
+                })
+                .then((data) => {
+                    console.log("data==" + data);
+
+                    resultcall(data);
+                })
+                .catch((err) => console.log(err));
+
+
+        console.log(value)
+    }
 </script>
 
 <%- include('../partials/userfooter.ejs') %>

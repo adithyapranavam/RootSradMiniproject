@@ -24,7 +24,8 @@
                     <aside class="col-md-4 col-lg-3">
                         <ul class="nav nav-dashboard flex-column mb-3 mb-md-0" role="tablist">
                             <li class="nav-item">
-                                <a class="nav-link active" id="tab-dashboard-link" data-toggle="tab" href="#tab-dashboard" role="tab" aria-controls="tab-dashboard" aria-selected="true"><i class="bi bi-person-circle"></i> profile</a>
+                                <a class="nav-link active" id="tab-dashboard-link" data-toggle="tab" href="#tab-dashboard" role="tab" aria-controls="tab-dashboard" aria-selected="true">
+                                    <i class="bi bi-person-circle"></i> profile</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" id="tab-orders-link" data-toggle="tab" 
@@ -81,7 +82,71 @@
                                 </div>
                             </div>
 
-
+                            <div class="tab-pane fade" id="tab-orders" role="tabpanel" aria-labelledby="tab-orders-link">
+                                <% if(product.length === 0){ %>
+                                    <div class="d-flex align-items-center justify-content-center">
+                                        <lottie-player
+                                            src="https://assets10.lottiefiles.com/packages/lf20_3VDN1k.json"
+                                            background="transparent" speed="5"
+                                            style="width: 300px; height: 300px; opacity: 80%;" loop autoplay>
+                                        </lottie-player>
+                                        
+                                    </div>
+                                    <% } else { %> 
+                                <table class="table">
+                                    <thead>
+                                      <tr>
+                                        <th> Name </th>
+                                        <th > Image  </th>
+                                        <th style="text-align: center;"> Quantity </th>
+                                        <th style="text-align: center;"> Amount </th>
+                                        <th style="text-align: center;">Status</th>
+                                        <th style="text-align: center;">Show Details</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+            
+                                      <% for(var i=0;i<orders.length;i++){%>
+                                        <tr style="border: solid 5px;">
+                                        <% for(var j=0 ;j<orders[i].products.item.length ;j++) {%>
+                                          <tr >
+                                          <% for(var k=0;k<product.length;k++) {%>
+                                            
+                                           <% if(product[k]._id.toString()  ==  orders[i].products.item[j].productId.toString()){ %>  
+                                              <td ><%= product[k].name %></td>
+                                              <td><img src="/productImages/<%= product[k].image[0] %>" alt="" style="width: 50px; height: 50px;" ></td>
+                                              
+                                              <td style="text-align: center;"><%= orders[i].products.item[j].qty %></td>
+                                              
+                                              <% if(j==0){ %>
+                                                <td style="text-align: center;"><%= orders[i].products.totalPrice %></td>
+                                                <% }%>
+                                              
+                                                <% if(j==0){ %>
+                                              <td style="text-align: center;"><%= orders[i].status %></td>
+                                              <% }%>
+            
+                                              <% if(j==0){ %>
+                                              <td style="text-align: center;">
+                                                <a href="/orderStatus?id=<%= orders[i]._id %>" >Show Details</a>  
+            
+                                              </td>
+                                              <% }%>
+                                            <% }%>
+                                           
+                                          <%}%>
+                                          
+                                        </tr>
+                                        
+                                        <%}%>
+                                        
+                                      </tr>
+                                    <%}%>
+            
+                                    </tbody>
+                                  </table>
+                                  <% } %>
+                            </div>
                 <div class="tab-pane fade" id="tab-address" role="tabpanel"
                             aria-labelledby="tab-address-link">
                         <h3 class="card-title ">Shipping Address </h3>
@@ -121,75 +186,11 @@
                             </div> 
                             <% }); %>
                         </div>
-                 </div>
-                 <div class="tab-pane fade" id="tab-orders" role="tabpanel" aria-labelledby="tab-orders-link">
-                    <% if(product.length === 0){ %>
-                        <div class="d-flex align-items-center justify-content-center">
-                            <lottie-player
-                                src="https://assets10.lottiefiles.com/packages/lf20_3VDN1k.json"
-                                background="transparent" speed="5"
-                                style="width: 300px; height: 300px; opacity: 80%;" loop autoplay>
-                            </lottie-player>
-                            <a href="/" class="btn btn-outline-primary-2"><span>GO SHOP</span><i
-                                class="icon-long-arrow-right"></i></a>
-                        </div>
-                        <% } else { %> 
-                    <table class="table">
-                        <thead>
-                          <tr>
-                            <th> Name </th>
-                            <th > Image  </th>
-                            <th style="text-align: center;"> Quantity </th>
-                            <th style="text-align: center;"> Amount </th>
-                            <th style="text-align: center;">Status</th>
-                            <th style="text-align: center;">Show Details</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-
-                          <% for(var i=0;i<orders.length;i++){%>
-                            <tr style="border: solid 5px;">
-                            <% for(var j=0 ;j<orders[i].products.item.length ;j++) {%>
-                              <tr >
-                              <% for(var k=0;k<product.length;k++) {%>
-                                
-                               <% if(product[k]._id.toString()  ==  orders[i].products.item[j].productId.toString()){ %>  
-                                  <td ><%= product[k].name %></td>
-                                  <td><img src="/productImages/<%= product[k].image[0] %>" alt="" style="width: 50px; height: 50px;" ></td>
-                                  
-                                  <td style="text-align: center;"><%= orders[i].products.item[j].qty %></td>
-                                  
-                                  <% if(j==0){ %>
-                                    <td style="text-align: center;"><%= orders[i].products.totalPrice %></td>
-                                    <% }%>
-                                  
-                                    <% if(j==0){ %>
-                                  <td style="text-align: center;"><%= orders[i].status %></td>
-                                  <% }%>
-
-                                  <% if(j==0){ %>
-                                  <td style="text-align: center;">
-                                    <a href="/orderStatus?id=<%= orders[i]._id %>" >Show Details</a>  
-
-                                  </td>
-                                  <% }%>
-                                <% }%>
-                               
-                              <%}%>
-                              
-                            </tr>
-                            
-                            <%}%>
-                            
-                          </tr>
-                        <%}%>
-
-                        </tbody>
-                      </table>
-                      <% } %>
-                </div><!-- .End .tab-pane -->
+                </div>
+              
+                
                             <!-- address modal -->
-                            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
                             aria-hidden="true">
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
@@ -264,7 +265,7 @@
                                 </div>
                             </div>
                         </div>
-                        </div>
+                    </div>
                     </div>
                 </div>
             </div>

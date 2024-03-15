@@ -1,88 +1,91 @@
 <%- include('../layouts.ejs') -%>
-
-<header class="header header-7">
-    <div class="header-middle sticky-header">
-        <div class="container">
-            <div class="header-left">
-                <button class="mobile-menu-toggler">
-                    <span class="sr-only">Toggle mobile menu</span>
-                    <i class="icon-bars"></i>
-                </button>
-                
-                <a href="/" class="logo">
-                    <img src="/assets/images/download.png" alt="Molla Logo" width="100" height="20">
-                </a>
-            </div>
-
-            <div class="header-right">
-                <nav class="main-nav">
-                    <ul class="menu sf-arrows">
-                        <li class="megamenu-container active">
-                            <a href="/" class="sf-with-ul">Home</a>
-                        </li>
-                        <li>
-                            <a href="/shop" class="sf-with-ul">Shop</a>
-                        </li>
-                        <% if(user){ %>
-                            <li>
-                                <a href="/logout">Logout</a>
-                            </li>
-
-                        <% } else { %>
-                            <li>
-                                <a href="/login" class="sf-with-ul">Login</a>
-                                <ul>
-                                    <li><a href="/signup"> NEW TO HEAR? &nbsp; <span style="color:green;">SIGN UP</span></a></li>
-                                </ul>
-                            </li> 
-                        <% } %>
-                    </ul>
-                </nav>
-                
-                <form   method="get" class="mobile-search   " action="/shop">
-                    <label for="mobile-search" class="sr-only">Search</label>
-                    <input type="search" class="form-control border border-5" name="search" id="mobile-search" placeholder="Search in..." required style="background-color: transparent; color: black ; ">
-                    <button class="btn btn-primary" type="submit"><i class="icon-search"></i></button>
-                </form>
-                
-                <a href="/wishlist" class="wishlist-link">
-                    <i class="icon-heart-o"></i>
-                    <% if(user)
-                    { %>
-                        <span class="wishlist-count"><%= wishlist %></span> 
-                   <%  } else{ %>
-                <% } %>   
-                </a>
-               
-                <div class="dropdown cart-dropdown"> 
-                    <a href="/cart" class="dropdown-toggle" >
-                        <i class="icon-shopping-cart"></i>
-                        <% if (user) { %>
-                             <span class="cart-count"> <%= cartCount %></span>
-                             <% } else { %>
-                             
-                                <% } %>
+<body class>
+    <header class="header header-7">
+        <div class="header-middle sticky-header">
+            <div class="container">
+                <div class="header-left">
+                    <button class="mobile-menu-toggler">
+                    
+                        <span class="sr-only">Toggle mobile menu</span>
+                        <i class="icon-bars"></i>
+                    </button>
+                    
+                    <a href="/" class="logo">
+                        <img src="/assets/images/download.png" alt="Molla Logo" width="100" height="20">
                     </a>
                 </div>
-
-                <% if(user){ %>
-                    <li style="list-style: none;">
-                        <a href="/profile">
-                        <img src="/assets/images/download.jpeg" style="height: 30px; width: 30px; border-radius: 50%; margin-top: 10px; margin-left: 15px;" alt="">
-                        <p style="color: green; font-size: 12px; margin-left: 15px;"><%=name%></p>
+    
+                <div class="header-right">
+                    <nav class="main-nav">
+                        <ul class="menu sf-arrows">
+                            <li>
+                                <a href="/">Home</a>
+                            </li>
+                            <li>
+                                <a href="/shop">Shop</a>
+                            </li>
+                            <% if(user){ %>
+                                <li>
+                                    <a href="/logout">Logout</a>
+                                </li>
+    
+                            <% } else { %>
+                                <li>
+                                    <a href="/login" class="sf-with-ul">Login</a>
+                                    <ul>
+                                        <li><a href="/signup"> NEW TO HEAR? &nbsp; <span style="color:green;">SIGN UP</span></a></li>
+                                    </ul>
+                                </li> 
+                            <% } %>
+                        </ul>
+                    </nav>
+                    
+                    <form   method="" class="mobile-search" action=""onsubmit="return false">
+                        <label for="mobile-search" class="sr-only">Search</label>
+                        <input type="search" class="form-control border border-5" name="search" id="searchValue" placeholder="Search in..." required style="background-color: transparent; color: black ; ">
+                        <button class="btn btn-primary" type="submit" onclick="productsearch()"><i class="icon-search"></i></button>
+                    </form>
+                    
+                    <a href="/wishlist" class="wishlist-link">
+                        <i class="icon-heart-o"></i>
+                        <% if(user)
+                        { %>
+                            <span class="wishlist-count"><%= wishlist %></span> 
+                       <%  } else{ %>
+                    <% } %>   
+                    </a>
+                   
+                    <div class="dropdown cart-dropdown"> 
+                        <a href="/cart" class="dropdown-toggle" >
+                            <i class="icon-shopping-cart"></i>
+                            <% if (user) { %>
+                                 <span class="cart-count"> <%= cartCount %></span>
+                                 <% } else { %>
+                                 
+                                    <% } %>
                         </a>
-                    </li>
-
-                <% } else { %>
-                    <li style="list-style: none;">
-                        <img src="/assets/images/images.jpeg" style="height: 42px; width: 40px; border-radius: 50%; margin-bottom: 5px; margin-left: 15px;" alt="">
-                    </li> 
-                <% } %>
-
+                    </div>
+    
+                    <% if(user){ %>
+                        <li style="list-style: none;">
+                            <a href="/profile">
+                            <img src="/assets/images/download.jpeg" style="height: 30px; width: 30px; border-radius: 50%; margin-top: 10px; margin-left: 15px;" alt="">
+                            <p style="color: green; font-size: 12px; margin-left: 15px;"><%=name%></p>
+                            </a>
+                        </li>
+    
+                    <% } else { %>
+                        <li style="list-style: none;">
+                            <img src="/assets/images/images.jpeg" style="height: 42px; width: 40px; border-radius: 50%; margin-bottom: 5px; margin-left: 15px;" alt="">
+                        </li> 
+                    <% } %>
+    
+                </div>
             </div>
         </div>
-    </div>
-</header>
+    </header>
+</body>
+
 
 
 

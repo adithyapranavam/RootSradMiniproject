@@ -14,7 +14,7 @@ const { isValidObjectId } = require('mongoose');
 const { name } = require('ejs');
     
   
-const API = "LpKOkcUND4ClatShjgRIH2FVPG1wbn7sx9BfZeE03QrozXA6WdbwJ2VIs6laoPdzDC14KrOtWTuRA0vm"
+const API = 'AMbqV6TDXnSDntWsXvqbB6Uk2LlF3n6MJoRZZhde4rodoehhYNFE7pf1vWqz'
 // const API = 'AMbqV6TDXnSDntWsXvqbB6Uk2LlF3n6MJoRZZhde4rodoehhYNFE7pf1vWqz' 
 
 // PASSWORD BCRYPT
@@ -90,30 +90,29 @@ const login = async(req,res)=>
             if(isExistingUser.password === password)
             {
                 const signinPage = 0;
-                req.session.userData = isExistingUser.email
-                res.redirect('/')
-                // const number = isExistingUser.number;
-                // let randome = Math.floor(Math.random() * 9000) + 1000;
-                // fast2sms.sendMessage({
-                //     authorization: API,
-                //     message: `Your verification OTP is: ${randome}`,
-                //     numbers: [number],
-                // })
-                //     .then(saveUser());
-                // //save randome Number to database then render verify page
-                // console.log("this is otp",randome);
-                // function saveUser() {
-                //     const newUser = new OTP({
-                //         number: randome
-                //     })
-                //     newUser.save()
-                //         .then(() => {
-                //             res.render('user/verification', {  signinPage });
-                //         })
-                //         .catch((error) => {
-                //             console.log("error generating numb", error);
-                //         });
-                // }
+                req.session.userData = isExistingUser
+                const number = isExistingUser.number;
+                let randome = Math.floor(Math.random() * 9000) + 1000;
+                fast2sms.sendMessage({
+                    authorization: API,
+                    message: `Your verification OTP is: ${randome}`,
+                    numbers: [number],
+                })
+                    .then(saveUser());
+                //save randome Number to database then render verify page
+                console.log("this is otp",randome);
+                function saveUser() {
+                    const newUser = new OTP({
+                        number: randome
+                    })
+                    newUser.save()
+                        .then(() => {
+                            res.render('user/verification', {  signinPage });
+                        })
+                        .catch((error) => {
+                            console.log("error generating numb", error);
+                        });
+                }
             }
         }
         catch(err)
@@ -130,12 +129,12 @@ const login = async(req,res)=>
         const num3 = req.body.num_3;
         const num4 = req.body.num_4;
         const code = parseInt(num1 + num2 + num3 + num4);
-        const email = req.session.data
+        const data = req.session.userData
         await OTP.find({ number: code })
             .then((fount) => { 
                 if (fount.length > 0) {
                     const succ = "Successfully LoggedIn"
-                    req.session.userData = email
+                    req.session.userData = data.email
                     res.redirect('/home')
 
                     // IF FOUND, DELETE THE OTP CODE FROM DB
@@ -294,6 +293,14 @@ const shop = async(req,res)=>
                 const user = true;
                 
                 res.render('user/shop',{ wishlist,name,cartCount,user,products,data })
+            }
+            else
+            {
+                const data = await categoryCollection.find()
+                const products = await product.find().limit(8);
+                const user = false;  
+                res.render('user/shop',{ user,products,data })
+
             }
         
     }
@@ -654,7 +661,7 @@ const userRegister = async(req,res)=>
             const isBlocked = req.body.isBlocked
             console.log("this is my phone number",phone);
 
-            const spassword = await SecurePassword(password);
+            // const spassword = await SecurePassword(password);
            req.session.data = new userModel(
                 { 
                     name:name,
@@ -1402,7 +1409,21 @@ else{
 }
 }
 
+const productsearch = (req, res) => {
+    const value = req.body.va;
 
+    product.find({ name: { $regex: value, $options: "i" } })
+        .then((data) => {
+            if (!data) {
+                res.status(404).send({ message: "Not found user with id" });
+            } else {
+                res.json(data);
+            }
+        })
+        .catch((err) => {
+            res.status(500).send({ message: "Error retriving user with id" });
+});
+};
     
 // Coupon
 const coupons = async (req, res) => {
@@ -1672,6 +1693,7 @@ module.exports = {
     sortfind,
     filterfind,
     poductpagin,
+    productsearch,
     coupons,
     
     oderAvailable,
@@ -1680,6 +1702,5 @@ module.exports = {
     orderStatus,
     return_reason,
     odder_cancel
- 
 }
 

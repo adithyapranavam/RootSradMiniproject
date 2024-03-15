@@ -183,8 +183,19 @@
 
 <script>
 
+// leftbtn
+// let leftbtn = document.getElementById("sample").innerHTML
+// console.log(leftbtn)
+// if(leftbtn<=1){
+// 	let leftbtn = document.getElementById("leftbtn")
+// 	leftbtn.style.display="none";
+// }
   function priceinc(idval,sessval,chan){
-
+let leftbtn = document.getElementById("sample").innerHTML
+if(chan==-1 && leftbtn <= 1)
+{                                     1
+  return
+}
     fetch("/cart/update", {
             method: 'put',
             headers: {

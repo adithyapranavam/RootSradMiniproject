@@ -17,7 +17,7 @@ const multer = require('../middleware/multer');
 
      const adminlogin=(req,res)=>
  
-     {
+     { 
         try{
             if(req.session.admin)
             {
@@ -47,6 +47,7 @@ const multer = require('../middleware/multer');
         
          if(user&& user.password==password)
          {
+            req.session.admin = email
             res.redirect('/admin/dashboard')
          }
          else
@@ -77,6 +78,7 @@ const multer = require('../middleware/multer');
      const dashboard = async(req,res)=>
      {
         try{
+            
             const orders = await Ordersdb.find({});
             const users = await userModel.find({});
             const product = await productCollection.find({});
@@ -604,7 +606,7 @@ const status_change = async (req, res) => {
   {
   console.log(err);
   }
-}
+} 
 
 const graph_data = async (req, res) => {
 

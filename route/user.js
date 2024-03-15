@@ -32,7 +32,8 @@ Router.post("/signup",userController.userRegister)
 Router.post('/signIn',userController.OTPValidationSignIn); 
 //product view 
 Router.get('/productView/:id',userController.productView);
-
+// Search
+Router.post("/poduct/search", userController.productsearch);
 //ADD TO CART
 Router.get('/cart',userController.loadcart);
 Router.post('/cart/:id',userController.AddCart)
