@@ -1,4 +1,6 @@
+
 <%- include('../partials/adminHeader1.ejs') %>
+
 
 <body class="bg-theme bg-theme1">
  
@@ -54,7 +56,11 @@
         <i class="zmdi zmdi-grid"></i> <span>Banner Details</span>
       </a>
     </li>
-    
+    <li>
+      <a href="">
+        <i class="zmdi zmdi-grid"></i> <span>sales report</span>
+      </a>
+    </li>
     <li>
       <a href="/admin/signout">
         <i class="zmdi zmdi-grid"></i> <span>logout</span>
@@ -85,51 +91,84 @@
     <div class="container-fluid">
 
   <!--Start Dashboard Content-->
-
-	<div class="card mt-3">
-    <div class="card-content">
-        <div class="row row-group m-0">
-            <div class="col-12 col-lg-6 col-xl-3 border-light">
-                <div class="card-body">
-                  <h5 class="text-white mb-0">9526 <span class="float-right"><i class="fa fa-shopping-cart"></i></span></h5>
-                    <div class="progress my-3" style="height:3px;">
-                       <div class="progress-bar" style="width:55%"></div>
-                    </div>
-                  <p class="mb-0 text-white small-font">Total Orders <span class="float-right">+4.2% <i class="zmdi zmdi-long-arrow-up"></i></span></p>
+  
+  <div class="container text-center mb-3">
+    <div class="row text-center mt-2">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title p-2">Admin Dashboard</h4>
+            <div class="row">
+          
+              <div class="col-md-3 stretch-card grid-margin">
+                <div class="card bg-gradient-danger shadow">
+                  <div class="card-body">
+                    <h4 class="mb-3 h5">Total Orders</h4>
+                    <h2 class="mb-5 h4"><%=totalOrders %></h2>
+                  </div>
                 </div>
-            </div>
-            <div class="col-12 col-lg-6 col-xl-3 border-light">
-                <div class="card-body">
-                  <h5 class="text-white mb-0">8323 <span class="float-right"><i class="fa fa-usd"></i></span></h5>
-                    <div class="progress my-3" style="height:3px;">
-                       <div class="progress-bar" style="width:55%"></div>
-                    </div>
-                  <p class="mb-0 text-white small-font">Total Revenue <span class="float-right">+1.2% <i class="zmdi zmdi-long-arrow-up"></i></span></p>
+              </div>
+              <div class="col-md-3 stretch-card grid-margin">
+                <div class="card bg-gradient-danger shadow">
+                  <div class="card-body">
+                    <h4 class="mb-3 h5" style="color: #efede8">Total Category</h4>
+                    <h2 class="mb-5 h4"><%=totalcategory%></h2>
+                  </div>
                 </div>
-            </div>
-            <div class="col-12 col-lg-6 col-xl-3 border-light">
-                <div class="card-body">
-                  <h5 class="text-white mb-0">6200 <span class="float-right"><i class="fa fa-eye"></i></span></h5>
-                    <div class="progress my-3" style="height:3px;">
-                       <div class="progress-bar" style="width:55%"></div>
-                    </div>
-                  <p class="mb-0 text-white small-font">Visitors <span class="float-right">+5.2% <i class="zmdi zmdi-long-arrow-up"></i></span></p>
+              </div>
+              <div class="col-md-3 stretch-card grid-margin">
+                <div class="card bg-gradient-info card-img-holder shadow">
+                  <div class="card-body">
+                    <h4 class="font-weight-normal mb-3 h5">Total Users</h4>
+                    <h2 class="mb-5 h4"><%=totaluser %></h2>
+                  </div>
                 </div>
-            </div>
-            <div class="col-12 col-lg-6 col-xl-3 border-light">
-                <div class="card-body">
-                  <h5 class="text-white mb-0">5630 <span class="float-right"><i class="fa fa-envira"></i></span></h5>
-                    <div class="progress my-3" style="height:3px;">
-                       <div class="progress-bar" style="width:55%"></div>
-                    </div>
-                  <p class="mb-0 text-white small-font">Messages <span class="float-right">+2.2% <i class="zmdi zmdi-long-arrow-up"></i></span></p>
+              </div>
+              <div class="col-md-3 stretch-card grid-margin">
+                <div class="card bg-gradient-success card-img-holder shadow">
+                  <div class="card-body">
+                    <h4 class="font-weight-normal mb-3 h5">Total Products</h4>
+                    <h2 class="mb-5 h4"><%=totalProduct %></h2>
+                  </div>
                 </div>
+              </div>
+          
             </div>
+          </div>
         </div>
+      </div>
     </div>
- </div>  
+    <button onclick="pdfdownloard()" style="margin-left: 25px;" type="button" class="btn btn-info" id="pdfbtn" >Sales Report</button>
+    <!--  #################  end ################# -->
+
+    <!--  #################  Sales Section ################# -->
+    <div class="container mt-4">
+      <div class="row">
+        <!-- <div class="col-md-6">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Category </h5>
+              <div class="text-center">
+                <canvas id="stat" width="300" height="300"></canvas>
+              </div>
+            </div>
+          </div>
+        </div> -->
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Order Status</h5>
+              <div class="text-center">
+                <canvas id="myChart" width="300" height="300"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>  
 	  
- <button onclick="pdfdownloard()" style="margin-left: 25px;" type="button" class="btn btn-info" id="pdfbtn" >Sales Report</button>
+ 
 
  <div class="row" style="margin-top: 100px;padding: 0 300px;">
   <canvas id="myChart" style=" margin-bottom: 50px;">
@@ -156,99 +195,137 @@
     <!--End Back To Top Button-->
 	
     <script>
-       let moderes;
-    let fetchYear ;
-    let fetchDataMonth ;
-    let fetchcustomDate; 
+      let moderes;
+   let fetchYear ;
+   let fetchDataMonth ;
+   let fetchcustomDate; 
 
-      addEventListener("DOMContentLoaded",function fetchfulldata(){
-    
-    const mode = 'full'
-    const url = `/admin/graph/data?id=${mode}`;
-  
-    const options = {
-        method: 'POST',
-        Headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ id: url })
-      }
-      const type = 'bar';
-      const id = "myChart"
-      fetchdata(url, options, type, id)
-  });
-  
-  
-  function fetchdata(url, options, type, id){
-  
-  fetch(url, options)
-  .then(response => response.json())
-  .then(data => {
-    // console.log(data,"data..................");
-    chartBar(data, type, id)
-    chartLine(myData, 'line', 'myChart2');
-  
-  })
-  }
-  function chartBar(data, type, id){
-        // Get a reference to the canvas element
-        const ctx = document.getElementById(id).getContext('2d');
-  
-        // Set up your data for the chart
-        const labels = data.map(item => item.label); // Assuming each data object has a 'label' property
-        const values = data.map(item => item.value); // Assuming each data object has a 'value' property
-        console.log("values", values);
-        // Create the chart
-        new Chart(ctx, {
-          type: type, // Specify the type of chart you want (bar, line, pie, etc.)
-          data: {
-            labels: labels,
-            datasets: [{
-              label: 'My Data',
-              data: values,
-              backgroundColor: 'rgb(255,182,193)' // Set a color for the bars
-            }]
-          },
-          options: {
-            // Configure additional options as needed
-            scales: {
-          y: {
-            beginAtZero: true
-          }
-        }
-        }
-  });
-  
-  }
-  
-  function pdfdownloard(){
+     addEventListener("DOMContentLoaded",function fetchfulldata(){
+   
+   const mode = 'full'
+   const url = `/admin/graph/data?id=${mode}`;
+ 
+   const options = {
+       method: 'POST',
+       Headers: {
+         'Content-Type': 'application/json'
+       },
+       body: JSON.stringify({ id: url })
+     }
+     const type = 'bar';
+     const id = "myChart"
+     fetchdata(url, options, type, id)
+ });
+ 
+ 
+ function fetchdata(url, options, type, id){
+ 
+ fetch(url, options)
+ .then(response => response.json())
+ .then(data => {
+   // console.log(data,"data..................");
+   chartBar(data, type, id)
+   chartLine(myData, 'line', 'myChart2');
+ 
+ })
+ }
+ function chartBar(data, type, id){
+       // Get a reference to the canvas element
+       const ctx = document.getElementById(id).getContext('2d');
+ 
+       // Set up your data for the chart
+       const labels = data.map(item => item.label); // Assuming each data object has a 'label' property
+       const values = data.map(item => item.value); // Assuming each data object has a 'value' property
+       console.log("values", values);
+       // Create the chart
+       new Chart(ctx, {
+         type: type, // Specify the type of chart you want (bar, line, pie, etc.)
+         data: {
+           labels: labels,
+           datasets: [{
+             label: 'My Data',
+             data: values,
+             backgroundColor: ['rgb(255, 99, 132)',
+      'rgb(54, 162, 235)',
+      'rgb(255, 205, 86)']
+ // Set a color for the bars
+           }]
+         },
+         options: {
+           // Configure additional options as needed
+           scales: {
+         y: {
+           beginAtZero: true
+         }
+       }
+       }
+ });
+ 
+ }
+ 
+ function pdfdownloard(){
 
 
 
-  fetch("/admin/pdf/downloard", {
-              method: "post",
-              headers: {
-                  "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ year:fetchYear , month:fetchDataMonth, mode:moderes, custom:fetchcustomDate}),
-          })
-          .then(response => response.blob())
-            .then(blob => {
-                // Create a download link for the PDF
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'report.pdf';
-                a.click();
+ fetch("/admin/pdf/downloard", {
+             method: "post",
+             headers: {
+                 "Content-Type": "application/json",
+             },
+             body: JSON.stringify({ year:fetchYear , month:fetchDataMonth, mode:moderes, custom:fetchcustomDate}),
+         })
+         .then(response => response.blob())
+           .then(blob => {
+               // Create a download link for the PDF
+               const url = URL.createObjectURL(blob);
+               const a = document.createElement('a');
+               a.href = url;
+               a.download = 'report.pdf';
+               a.click();
 
-                // Clean up the URL object
-                URL.revokeObjectURL(url);
-            })
-              .catch((err) => console.log(err));
+               // Clean up the URL object
+               URL.revokeObjectURL(url);
+           })
+             .catch((err) => console.log(err));
 }
 
-    </script>
-
+   </script>
+<script>
+     let statusScript = document.getElementById('status')
+  let orderstatuss = JSON.parse(statusScript.textContent)
+  console.log("hi",orderstatuss);
+  
+  const stat = document.getElementById('stat').getContext('2d');
+  const chart = new Chart(stat, {
+    type: 'pie',
+    data: {
+      labels: ['Delivered', 'Pending', 'Cancelled'],
+      datasets: [{
+        label: ['Delivered', 'Pending', 'Cancelled'],
+        data: [orderstatuss[0].delivered, orderstatuss[0].pending, orderstatuss[0].cancelled],
+        backgroundColor: [
+        'rgb(255, 99, 132)',
+      'rgb(54, 162, 235)',
+      'rgb(255, 205, 86)'
+          
+        ],
+      }]
+    },
+    options: {
+     
+      aspectRatio: 1, // Set the aspect ratio (1 for a square chart)
+      responsive: true, // Make the chart responsive
+      maintainAspectRatio: false, // Disable aspect ratio constraint
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true,
+          }
+        }]
+      }
+    }
+  });
+</script>
 	
  <!-- Bootstrap core JavaScript-->
   <script src="/assets/js/jquery.min.js"></script>

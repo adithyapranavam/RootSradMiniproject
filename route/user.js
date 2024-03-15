@@ -60,9 +60,6 @@ Router.get('/deleteAddress',userController.remove)
 
 // COUPON
 Router.post('/coupons/couponValidation',userController.coupons)
-
-
-
 Router.post('/odder/successpost/Check',userController.oderAvailable)
 Router.post('/oddersuccesspost',userController.odderSuccsspost)
 Router.get('/oderSucess',userController.oderrSuccess)

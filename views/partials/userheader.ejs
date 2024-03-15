@@ -9,7 +9,7 @@
                     <i class="icon-bars"></i>
                 </button>
                 
-                <a href="" class="logo">
+                <a href="/" class="logo">
                     <img src="/assets/images/download.png" alt="Molla Logo" width="100" height="20">
                 </a>
             </div>
@@ -39,15 +39,11 @@
                     </ul>
                 </nav>
                 
-                <div class="header-search">
-                    <a href="#" class="search-toggle" role="button"><i class="icon-search"></i></a>
-                    <form action="#" method="get">
-                        <div class="header-search-wrapper">
-                            <label for="q" class="sr-only">Search</label>
-                            <input type="search" class="form-control" name="q" id="q" placeholder="Search in..." required>
-                        </div>
-                    </form>
-                </div>
+                <form   method="get" class="mobile-search   " action="/shop">
+                    <label for="mobile-search" class="sr-only">Search</label>
+                    <input type="search" class="form-control border border-5" name="search" id="mobile-search" placeholder="Search in..." required style="background-color: transparent; color: black ; ">
+                    <button class="btn btn-primary" type="submit"><i class="icon-search"></i></button>
+                </form>
                 
                 <a href="/wishlist" class="wishlist-link">
                     <i class="icon-heart-o"></i>

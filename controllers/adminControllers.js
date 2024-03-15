@@ -77,8 +77,15 @@ const multer = require('../middleware/multer');
      const dashboard = async(req,res)=>
      {
         try{
-           
-                res.render('admin/dashboard')
+            const orders = await Ordersdb.find({});
+            const users = await userModel.find({});
+            const product = await productCollection.find({});
+            const categeory = await categoryCollection.find({})
+        const totalOrders = orders.length
+        const totalProduct = product.length
+        const totaluser = users.length
+        const totalcategory = categeory.length
+                res.render('admin/dashboard',{totalOrders,totalProduct,totaluser,totalcategory})
            
         }
         catch(error)
@@ -567,9 +574,10 @@ const oderDetails = async (req, res) => {
     {
         let arr = []; 
         const orders = await Ordersdb.find({});
+      
         const product = await productCollection.find({});
-    
-        res.render("admin/oderDetails", { orders, product,arr });
+   
+        res.render("admin/oderDetails", { orders, product,arr});
     }
     catch(err)
     {

@@ -279,7 +279,7 @@ const newPassword = async (req, res) => {
 const shop = async(req,res)=>
 {
          try{
-            
+             
             let cart,cartCount,wishlist;
             let Product;
             if(req.session.userData)
@@ -839,6 +839,7 @@ const AddCart = async(req,res)=>
         const product = cartProducts.find(prod => prod._id.toString() === item.productId.toString());
         if (product) {
             totalPrice += item.quantity * product.price;
+            
           
         } else {
             console.log(`Product not found for item: ${item.productId}`);
@@ -920,7 +921,8 @@ const updateCart = async(req,res)=>
             await user.save();
             let valp = user.cart.items[index].offer;
             let valq = user.cart.items[index].quantity;
-            user.cart.items[index].price = valp * valq;
+            let  totalPrice = Math.abs(valp * valq).toFixed(2);
+            user.cart.items[index].price = totalPrice 
             await user.save();
     
         } else {
@@ -932,7 +934,8 @@ const updateCart = async(req,res)=>
     
             let valp = user.cart.items[index].offer;
             let valq = user.cart.items[index].quantity;
-            user.cart.items[index].price = valp * valq;
+            let  totalPrice = Math.abs(valp * valq).toFixed(2);
+            user.cart.items[index].price = totalPrice 
             await user.save();  
         }
 res.json(100);
@@ -1195,8 +1198,7 @@ console.log(prs,pri,data.name,data.category,val.quantity);
     }); 
 
                     const Adress = user.address.filter((data)=>data._id==addressid)
-                    console.log(Adress,"address");
-                    console.log(userid,req.body.payment,Adress[0].fullname, Adress[0].mobile,Adress[0].pin,Adress[0].state,Adress[0].city, Adress[0].city,Adress[0].houseName,Adress[0].country);
+                    
                     const Orders = new Ordersdb({
                         userId: userid,
                         payment: req.body.payment,
@@ -1233,8 +1235,9 @@ console.log(prs,pri,data.name,data.category,val.quantity);
                      total = Orders.products.item.reduce((tot, val) => {
                         return tot + val.price * val.qty;
                     }, 0);
-            
+                   
                     Orders.products.totalPrice = total;
+                
             
                 }
             
@@ -1248,7 +1251,7 @@ console.log(prs,pri,data.name,data.category,val.quantity);
                         key_secret: "HeU66JXIWNBWFHC1vnC6qB7X",
                     });
                     let toralPrice =  total*100
-             
+                    
                     const amount = toralPrice; // Amount in paise (100 paise = 1 INR)
                     const currency = "INR";
                     console.log(amount,"amount=======");
