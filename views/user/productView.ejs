@@ -21,8 +21,8 @@
                             <div class="row">
                                 <figure class="product-main-image">
                                     
-                                    <img id="product-zoom" src="http://rootsrad.shop/public/productImages/<%= data.image[0]%>"
-                                     data-zoom-image="http://rootsrad.shop/public/productImages/<%= data.image[1]%>"alt="product image">
+                                    <img id="product-zoom" src="/productImages/<%= data.image[0]%>"
+                                     data-zoom-image="/productImages/<%= data.image[1]%>"alt="product image">
                                 
                                     <a href="#" id="btn-product-gallery" class="btn-product-gallery">
                                         <i class="icon-arrows"></i>
@@ -31,26 +31,26 @@
 
                                 <div id="product-zoom-gallery" class="product-image-gallery">
                                     <a class="product-gallery-item active" href="#" 
-                                    data-image="http://rootsrad.shop/public/productImages/<%= data.image[0]%>" 
+                                    data-image="/productImages/<%= data.image[0]%>" 
                                     data-zoom-image="/productImages/<%= data.image[0]%>">
-                                    <img src="http://rootsrad.shop/public/productImages/<%= data.image[0]%>" alt="product side">
+                                    <img src="/productImages/<%= data.image[0]%>" alt="product side">
                                     </a>
 
                                     <a class="product-gallery-item " href="#" 
                                     data-image="/productImages/<%= data.image[2]%>" 
                                     data-zoom-image="/productImages/<%= data.image[2]%>">
-                                        <img src="http://rootsrad.shop/public/productImages/<%= data.image[2]%>" alt="product cross">
+                                        <img src="/productImages/<%= data.image[2]%>" alt="product cross">
                                     </a>
 
                                     <a class="product-gallery-item " href="#" 
-                                    data-image="http://rootsrad.shop/public/productImages/<%= data.image[3]%>" 
+                                    data-image="/productImages/<%= data.image[3]%>" 
                                     data-zoom-image="/productImages/<%= data.image[3]%>">
-                                        <img src="http://rootsrad.shop/public/productImages/<%= data.image[3]%>" alt="product with model">
+                                        <img src="/productImages/<%= data.image[3]%>" alt="product with model">
                                     </a>
                                     <a class="product-gallery-item " href="#" 
                                     data-image="/productImages/<%= data.image[1]%>" 
                                     data-zoom-image="/productImages/<%= data.image[1]%>">
-                                        <img src="http://rootsrad.shop/public/productImages/<%= data.image[1]%>" alt="product with model">
+                                        <img src="/productImages/<%= data.image[1]%>" alt="product with model">
                                     </a>
                                 </div>
                             </div>
@@ -175,7 +175,7 @@
             <div class="product product-7 text-center">
                 <figure class="product-media">
                     <a href="/productView/<%= data._id%>">
-                        <img src="http://rootsrad.shop/public/productImages/<%= data.image[0]%>" alt="Product image" class="product-image">
+                        <img src="/productImages/<%= data.image[0]%>" alt="Product image" class="product-image">
                     </a>
                     <div class="product-action">
                         <a href="/productView/<%= data._id%>" class="btn-product btn-cart"><span>add to cart</span></a>
