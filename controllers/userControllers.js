@@ -866,7 +866,7 @@ const AddCart = async(req,res)=>
     }
 
 }
-
+   
 const cartQuantityUpdate = async (req, res) => {   
    
     const cartId = req.params.itemId;
